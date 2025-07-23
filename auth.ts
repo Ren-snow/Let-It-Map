@@ -5,8 +5,8 @@ import {prisma} from "@/lib/prisma"
 
 export const { auth, handlers, signIn, signOut} = NextAuth({
   providers: [GitHubProvider({
-    clientId: process.env.GITHUB_ID!,
-    clientSecret: process.env.GITHUB_SECRET!
+    clientId: process.env.AUTH_GITHUB_ID!,
+    clientSecret: process.env.AUTH_GITHUB_SECRET!
   })],
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(prisma)
 })
