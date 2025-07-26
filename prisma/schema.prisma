@@ -23,6 +23,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   locations     Location[]
+  posts         Post[] 
   createdAt     DateTime  @default(now())
 }
 
@@ -38,8 +39,21 @@ model Location {
   // リレーション
   user   User   @relation(fields: [userId], references: [id])
   userId String
+  posts         Post[] 
 }
 
+model Post {
+  id          String   @id @default(cuid())
+  content     String
+  createdAt   DateTime @default(now())
+
+  // 投稿したユーザーとの関係
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  // 投稿対象の場所（Location）との関係
+  locationId  String
+  location    Location @relation(fields: [locationId], references: [id])
+}
 model Account {
   id                 String  @id @default(cuid())
   userId             String
