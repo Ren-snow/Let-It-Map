@@ -18,7 +18,7 @@ export default async function PostsPage() {
             <div>
                 <h1>Dashboard</h1>
                 <Link href={'/posts/new'}>
-                    <Button className="bg-indigo-900 text-white cursor-pointer">
+                    <Button variant="customIndigo">
                         New Post
                     </Button>
                 </Link>

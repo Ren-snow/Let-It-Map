@@ -30,13 +30,13 @@ model User {
 model Location {
   id          String   @id @default(cuid())
   title       String
+  address String?
   description String?
   lat         Float
   lng         Float
   country     String?
   isPublic    Boolean  @default(true)
   createdAt   DateTime @default(now())
-  // リレーション
   user   User   @relation(fields: [userId], references: [id])
   userId String
   posts         Post[] 
@@ -44,9 +44,9 @@ model Location {
 
 model Post {
   id          String   @id @default(cuid())
+  title       String
   content     String
   createdAt   DateTime @default(now())
-
   // 投稿したユーザーとの関係
   userId      String
   user        User     @relation(fields: [userId], references: [id])
