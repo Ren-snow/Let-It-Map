@@ -4,18 +4,45 @@ import AddressInput from "@/components/map/AddressInput";
 import MapSelector from "@/components/map/MapSelector";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { LoadScript } from "@react-google-maps/api";
+import { useLoadScript, Libraries } from "@react-google-maps/api";
+import { useState } from "react";
+
+const libraries: Libraries = ["places"];
 
 export default function NewPost() {
+    const { isLoaded, loadError } = useLoadScript({
+        googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+        libraries,
+    });
+
+    const [selectedLocation, setSelectedLocation] = useState<{
+        address: string;
+        lat: number;
+        lng: number;
+    } | null>(null);
+
+    if (loadError)
+        return (
+            <div className="flex items-center justify-center h-screen text-red-600 text-lg font-semibold">
+                Error loading the map
+            </div>
+        );
+
+    if (!isLoaded)
+        return (
+            <div className="flex items-center justify-center h-screen text-gray-700 text-xl font-semibold">
+                Loading map…
+            </div>
+        );
+
     const handleAddressSelect = (address: string, lat: number, lng: number) => {
-        console.log("選ばれた住所:", address);
-        console.log("緯度経度:", lat, lng);
-        // ここで地図に渡したり、stateに保存したり
+        setSelectedLocation({ address, lat, lng });
     };
+
 
     return (
         <div className="max-w-lg mx-auto mt-10 flex flex-col gap-8">
-            <MapSelector />
+            <MapSelector selectedLocation={selectedLocation} />
             <Card>
                 <CardHeader className="font-bold">New Post</CardHeader>
                 <CardContent>
@@ -35,16 +62,15 @@ export default function NewPost() {
                                 required
                             />
                         </div>
-                        <LoadScript
-                            googleMapsApiKey={
-                                process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!
-                            }
-                            libraries={["places"]}
-                        >
+                        <div>
+                            <label className="block font-medium text-gray-700 mb-1">
+                                Address
+                            </label>
+
                             <AddressInput
                                 onSelectAddress={handleAddressSelect}
                             />
-                        </LoadScript>
+                        </div>
                         <div>
                             <label
                                 htmlFor=""

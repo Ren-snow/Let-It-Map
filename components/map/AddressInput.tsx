@@ -26,10 +26,7 @@ export default function AddressInput({ onSelectAddress }: Props) {
         }
     };
     return (
-        <div>
-            <label className="block font-medium text-gray-700 mb-1">
-                Address
-            </label>
+        
             <Autocomplete
                 onLoad={(autocomplete) =>
                     (autocompleteRef.current = autocomplete)
@@ -44,6 +41,6 @@ export default function AddressInput({ onSelectAddress }: Props) {
                     required
                 />
             </Autocomplete>
-        </div>
+        
     );
 }

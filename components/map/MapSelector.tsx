@@ -1,27 +1,38 @@
 "use client";
 
-import { GoogleMap, LoadScript } from "@react-google-maps/api";
+import { GoogleMap, Marker } from "@react-google-maps/api";
 
 const center = {
     lat: 51.532005,
     lng: -0.177331,
 };
+type Props = {
+    selectedLocation: {
+        address: string;
+        lat: number;
+        lng: number;
+    } | null;
+};
 
-function MapSelector() {
+function MapSelector({ selectedLocation }: Props) {
     return (
-        <LoadScript
-            googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}
-            libraries={["places"]}
+        <GoogleMap
+            mapContainerStyle={{
+                width: "100%",
+                height: "400px",
+            }}
+            center={selectedLocation ? { lat: selectedLocation.lat, lng: selectedLocation.lng } : center}
+            zoom={16}
         >
-            <GoogleMap
-                mapContainerStyle={{
-                    width: "100%",
-                    height: "400px", // 好きな高さ
-                }}
-                center={center}
-                zoom={16}
-            ></GoogleMap>
-        </LoadScript>
+            {selectedLocation && (
+                <Marker
+                    position={{
+                        lat: selectedLocation.lat,
+                        lng: selectedLocation.lng,
+                    }}
+                />
+            )}
+        </GoogleMap>
     );
 }
 
