@@ -39,7 +39,6 @@ export default function NewPost() {
         setSelectedLocation({ address, lat, lng });
     };
 
-
     return (
         <div className="max-w-lg mx-auto mt-10 flex flex-col gap-8">
             <MapSelector selectedLocation={selectedLocation} />
@@ -53,6 +52,7 @@ export default function NewPost() {
                                 className="block font-medium text-gray-700 mb-1"
                             >
                                 Place Name
+                                <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="text"
@@ -65,6 +65,7 @@ export default function NewPost() {
                         <div>
                             <label className="block font-medium text-gray-700 mb-1">
                                 Address
+                                <span className="text-red-500">*</span>
                             </label>
 
                             <AddressInput
@@ -76,10 +77,23 @@ export default function NewPost() {
                                 htmlFor=""
                                 className="block font-medium text-gray-700 mb-1"
                             >
-                                My Review
+                                Date
+                            </label>
+                            <input
+                                type="date"
+                                name="date"
+                                className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                        </div>
+                        <div>
+                            <label
+                                htmlFor=""
+                                className="block font-medium text-gray-700 mb-1"
+                            >
+                                My Experience
                             </label>
                             <textarea
-                                name="review"
+                                name="description"
                                 className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
