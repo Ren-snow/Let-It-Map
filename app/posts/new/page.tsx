@@ -4,8 +4,11 @@ import AddressInput from "@/components/map/AddressInput";
 import MapSelector from "@/components/map/MapSelector";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { createPost } from "@/lib/actions/create-post";
+import { UploadButton } from "@/lib/upload-thing";
 import { useLoadScript, Libraries } from "@react-google-maps/api";
-import { useState } from "react";
+import Image from "next/image";
+import { useState, useTransition } from "react";
 
 const libraries: Libraries = ["places"];
 
@@ -20,6 +23,9 @@ export default function NewPost() {
         lat: number;
         lng: number;
     } | null>(null);
+
+    const [isPending, startTransition] = useTransition();
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
 
     if (loadError)
         return (
@@ -45,7 +51,17 @@ export default function NewPost() {
             <Card>
                 <CardHeader className="font-bold">New Post</CardHeader>
                 <CardContent>
-                    <form className="flex flex-col gap-4">
+                    <form
+                        className="flex flex-col gap-4"
+                        action={(formData: FormData) => {
+                            if (imageUrl) {
+                                formData.append("imageUrl", imageUrl)
+                            }
+                            startTransition(() => {
+                                createPost(formData);
+                            });
+                        }}
+                    >
                         <div>
                             <label
                                 htmlFor=""
@@ -97,12 +113,38 @@ export default function NewPost() {
                                 className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
+                        <div>
+                            <label>Place Image</label>
+
+                            {imageUrl && (
+                                <Image
+                                    src={imageUrl}
+                                    alt="Image Preview"
+                                    className="w-full mb-4 object-cover rounded-xl"
+                                    width={300}
+                                    height={200}
+                                />
+                            )}
+                            <UploadButton
+                                endpoint="imageUploader"
+                                onClientUploadComplete={(res) => {
+                                    if (res && res[0].ufsUrl) {
+                                        setImageUrl(res[0].ufsUrl);
+                                    }
+                                }}
+                                onUploadError={(error: Error) => {
+                                    console.error("Upload error: ", error);
+                                }}
+                            />
+                        </div>
+
                         <Button
                             variant="customIndigo"
                             type="submit"
                             className="font-bold"
+                            disabled={isPending}
                         >
-                            Post
+                            {isPending ? "Posting..." : "Post"}
                         </Button>
                     </form>
                 </CardContent>

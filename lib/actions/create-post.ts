@@ -1,3 +1,5 @@
+"use server"
+
 import { auth } from "@/auth";
 import { prisma } from "../prisma";
 import { redirect } from "next/navigation";
@@ -13,6 +15,7 @@ export async function createPost(formData: FormData) {
     const address = formData.get("address")?.toString();
     const dateStr = formData.get("date")?.toString();
     const content = formData.get("description")?.toString();
+    const imageUrl = formData.get("imageUrl")?.toString();
 
     if (!title || !address) {
         throw new Error("Please enter both the place name and address.");
@@ -39,6 +42,7 @@ export async function createPost(formData: FormData) {
             title,
             date,
             content,
+            imageUrl,
             userId: session.user.id,
             locationId: location.id,
         },
