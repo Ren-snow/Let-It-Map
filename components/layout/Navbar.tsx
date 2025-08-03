@@ -9,7 +9,7 @@ export default function Navbar({ session }: { session: Session | null }) {
     return (
         <nav className="bg-indigo-900 shadow-md py-4">
             <div className="container mx-auto flex justify-between items-center px-4 lg:px-6">
-                <Link href={"/"} className="font-bold text-white text-2xl">
+                <Link href={"/"} className="font-bold text-white text-2xl tracking-tight">
                     Let It Map
                 </Link>
                 <div className="flex items-center space-x-4 text-white">
