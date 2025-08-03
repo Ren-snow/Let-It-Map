@@ -1,9 +1,8 @@
-"use server"
+"use server";
 
 import { auth } from "@/auth";
 import { prisma } from "../prisma";
 import { redirect } from "next/navigation";
-
 
 export async function createPost(formData: FormData) {
     const session = await auth();
@@ -21,7 +20,14 @@ export async function createPost(formData: FormData) {
         throw new Error("Please enter both the place name and address.");
     }
 
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     const date = dateStr ? new Date(dateStr) : null;
+
+    if (date && date.getTime() > today.getTime()) {
+        throw new Error("Date is invalid.");
+    }
 
     let location = await prisma.location.findFirst({
         where: { address: address },
@@ -48,5 +54,5 @@ export async function createPost(formData: FormData) {
         },
     });
 
-    redirect("/posts")
+    redirect("/posts");
 }
