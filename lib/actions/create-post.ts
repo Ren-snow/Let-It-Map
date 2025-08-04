@@ -15,6 +15,8 @@ export async function createPost(formData: FormData) {
     const dateStr = formData.get("date")?.toString();
     const content = formData.get("description")?.toString();
     const imageUrl = formData.get("imageUrl")?.toString();
+    const lat = parseFloat(formData.get("lat")?.toString() || "0");
+    const lng = parseFloat(formData.get("lng")?.toString() || "0");
 
     if (!title || !address) {
         throw new Error("Please enter both the place name and address.");
@@ -37,8 +39,8 @@ export async function createPost(formData: FormData) {
         location = await prisma.location.create({
             data: {
                 address: address || "",
-                lat: 0, //ダミー値 後でジオコーディング実装
-                lng: 0, //ダミー値 後でジオコーディング実装
+                lat, 
+                lng,
             },
         });
     }

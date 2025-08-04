@@ -53,12 +53,27 @@ export default function NewPost() {
                 <CardContent>
                     <form
                         className="flex flex-col gap-4"
-                        action={(formData: FormData) => {
-                            if (imageUrl) {
-                                formData.append("imageUrl", imageUrl)
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            const formData = new FormData(e.currentTarget);
+
+                            if (imageUrl) formData.append("imageUrl", imageUrl);
+                            if (selectedLocation) {
+                                formData.set(
+                                    "address",
+                                    selectedLocation.address
+                                ); 
+                                formData.set(
+                                    "lat",
+                                    selectedLocation.lat.toString()
+                                );
+                                formData.set(
+                                    "lng",
+                                    selectedLocation.lng.toString()
+                                );
                             }
                             startTransition(() => {
-                                createPost(formData);
+                                createPost(formData); 
                             });
                         }}
                     >
@@ -93,7 +108,7 @@ export default function NewPost() {
                                 htmlFor=""
                                 className="block font-medium text-gray-700 mb-1"
                             >
-                                Date
+                                Visited On
                             </label>
                             <input
                                 type="date"
