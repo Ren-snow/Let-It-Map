@@ -5,9 +5,10 @@ import { useRef } from "react";
 
 type Props = {
     onSelectAddress: (address: string, lat: number, lng: number) => void;
+    initialAddress?: string;
 };
 
-export default function AddressInput({ onSelectAddress }: Props) {
+export default function AddressInput({ onSelectAddress, initialAddress }: Props) {
     const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(
         null
     );
@@ -37,6 +38,7 @@ export default function AddressInput({ onSelectAddress }: Props) {
                     type="text"
                     name="address"
                     placeholder="Enter address"
+                    defaultValue={initialAddress ?? ""}
                     className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                 />
