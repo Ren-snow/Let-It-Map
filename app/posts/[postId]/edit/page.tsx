@@ -1,13 +1,10 @@
-// import AddressInput from "@/components/map/AddressInput";
-// import { Button } from "@/components/ui/button";
-// import { Card, CardContent, CardHeader } from "@/components/ui/card";
-// import { UploadButton } from "@/lib/upload-thing";
-// import Image from "next/image";
+
 "use server"
 import { prisma } from "@/lib/prisma";
 import EditForm from "@/components/ui/edit-form";
 
-export default async function EditPost({ params }: { params: { postId: string } }) {
+export default async function EditPost(props: { params: Promise<{ postId: string }> }) {
+    const params = await props.params;
     const post = await prisma.post.findUnique({
         where: { id: params.postId },
         include: { location: true },

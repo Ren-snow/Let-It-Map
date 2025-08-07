@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { UploadButton } from "@/lib/upload-thing";
 import { RefreshCw } from "lucide-react";
-// import Image from "next/image";
+import Image from "next/image";
 import type { Post, Location } from "@prisma/client";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useLoadScript, Libraries } from "@react-google-maps/api";
+import { updatePost } from "@/lib/actions/update-post";
+import Link from "next/link";
 
 interface PostWithLocation extends Post {
     location: Location;
@@ -17,10 +19,10 @@ interface PostWithLocation extends Post {
 interface EditFormProps {
     post: PostWithLocation;
 }
+
 const libraries: Libraries = ["places"];
 
 export default function EditForm({ post }: EditFormProps) {
-    
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
         libraries,
@@ -29,6 +31,8 @@ export default function EditForm({ post }: EditFormProps) {
     const [address, setAddress] = useState(post.location.address);
     const [lat, setLat] = useState(post.location.lat);
     const [lng, setLng] = useState(post.location.lng);
+
+    const [isPending, startTransition] = useTransition();
 
     const handleAddressSelect = (
         selectedAddress: string,
@@ -40,14 +44,32 @@ export default function EditForm({ post }: EditFormProps) {
         setLng(selectedLng);
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const formData = new FormData();
-        formData.append("address", address);
-        formData.append("lat", lat.toString());
-        formData.append("lng", lng.toString());
+        const formData = new FormData(e.currentTarget);
+
+        formData.set("address", address);
+        formData.set("lat", lat.toString());
+        formData.set("lng", lng.toString());
+
+        if (imageUrl) {
+            formData.set("imageUrl", imageUrl);
+        }
+
+        formData.set("postId", post.id);
+
+        startTransition(() => {
+            updatePost(post.id, formData).catch((err) => {
+                console.error("Error:", err);
+            });
+        });
     };
-     if (loadError) {
+
+    const [imageUrl, setImageUrl] = useState<string | null>(
+        post.imageUrl ?? null
+    );
+
+    if (loadError) {
         return (
             <div className="flex items-center justify-center h-screen text-red-600 text-lg font-semibold">
                 Error fetching the API
@@ -133,38 +155,52 @@ export default function EditForm({ post }: EditFormProps) {
                         <div>
                             <label>Place Image</label>
 
-                            {/* {imageUrl && (
-                                    <Image
-                                        src={imageUrl}
-                                        alt="Image Preview"
-                                        className="w-full mb-4 object-cover rounded-xl"
-                                        width={300}
-                                        height={200}
-                                    />
-                                )} */}
+                            {imageUrl && (
+                                <Image
+                                    src={imageUrl}
+                                    alt="Image Preview"
+                                    className="w-full mb-4 object-cover rounded-xl"
+                                    width={300}
+                                    height={200}
+                                />
+                            )}
                             <UploadButton
                                 endpoint="imageUploader"
-                                // onClientUploadComplete={(res) => {
-                                //     if (res && res[0].ufsUrl) {
-                                //         setImageUrl(res[0].ufsUrl);
-                                //     }
-                                // }}
+                                content={{ button: <div>Change Image</div> }}
+                                onClientUploadComplete={(res) => {
+                                    if (
+                                        res &&
+                                        res.length > 0 &&
+                                        res[0].ufsUrl
+                                    ) {
+                                        setImageUrl(res[0].ufsUrl);
+                                    }
+                                }}
                                 onUploadError={(error: Error) => {
                                     console.error("Upload error: ", error);
                                 }}
                             />
                         </div>
 
-                        <Button
-                            variant="customIndigo"
-                            type="submit"
-                            className="font-bold"
-                            // disabled={isPending}
-                        >
-                            <RefreshCw />
-                            Update
-                            {/* {isPending ? "Posting..." : "Post"} */}
-                        </Button>
+                        <div className="flex flex-col justify-center gap-3 items-center">
+                            <Button
+                                variant="customIndigo"
+                                type="submit"
+                                className="font-bold w-full"
+                                disabled={isPending}
+                            >
+                                <RefreshCw />
+                                {isPending ? "Updating..." : "Update"}
+                            </Button>
+                            <Link href={`/posts/${post.id}`} className="w-full">
+                                <Button
+                                    className="font-bold border w-full border-indigo-900 cursor-pointer bg-white hover:brightness-90"
+                                    disabled={isPending}
+                                >
+                                    Cancel
+                                </Button>
+                            </Link>
+                        </div>
                     </form>
                 </CardContent>
             </Card>

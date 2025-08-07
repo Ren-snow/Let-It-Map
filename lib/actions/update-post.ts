@@ -17,7 +17,7 @@ export async function updatePost(postId: string, formData: FormData) {
     const imageUrl = formData.get("imageUrl")?.toString();
     const lat = parseFloat(formData.get("lat")?.toString() || "0");
     const lng = parseFloat(formData.get("lng")?.toString() || "0");
-
+''
     if (!title || !address) {
         throw new Error("Please enter both the place name and address.");
     }
@@ -29,6 +29,14 @@ export async function updatePost(postId: string, formData: FormData) {
 
     if (date && date.getTime() > today.getTime()) {
         throw new Error("Date is invalid.");
+    }
+
+    const post = await prisma.post.findUnique({
+        where: { id: postId },
+    });
+
+    if (!post) {
+        throw new Error("Post not found.");
     }
 
     let location = await prisma.location.findFirst({

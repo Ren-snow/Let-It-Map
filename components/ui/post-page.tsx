@@ -4,7 +4,7 @@ import { Post, Location } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./button";
-import { FilePenLine } from "lucide-react";
+import { FilePenLine, Redo2 } from "lucide-react";
 import { useLoadScript, Libraries, Marker } from "@react-google-maps/api";
 import BaseMap from "../map/BaseMap";
 
@@ -18,7 +18,6 @@ interface PostPageClientProps {
 }
 
 export default function PostPageClient({ post }: PostPageClientProps) {
-
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
         libraries,
@@ -78,7 +77,7 @@ export default function PostPageClient({ post }: PostPageClientProps) {
                         </div>
                     </div>
                     <div>
-                        <Link href={`/posts/${post.id}`}>
+                        <Link href={`/posts/${post.id}/edit`}>
                             <Button variant="customIndigo">
                                 <FilePenLine />
                                 Edit
@@ -99,8 +98,16 @@ export default function PostPageClient({ post }: PostPageClientProps) {
                     )}
                 </div>
                 <BaseMap center={center}>
-                    <Marker position={center}  />
+                    <Marker position={center} />
                 </BaseMap>
+            </div>
+            <div className="text-center">
+                <Link href={`/posts`}>
+                    <Button variant="customIndigo">
+                        <Redo2  />
+                        Back to My Posts
+                    </Button>
+                </Link>
             </div>
         </div>
     );
