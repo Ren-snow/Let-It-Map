@@ -3,6 +3,7 @@
 import { auth } from "@/auth";
 import { prisma } from "../prisma";
 import { redirect } from "next/navigation";
+import { preparePostData } from "./post-helpers";
 
 export async function createPost(formData: FormData) {
     const session = await auth();
@@ -10,49 +11,12 @@ export async function createPost(formData: FormData) {
         throw new Error("Not authenticated.");
     }
 
-    const title = formData.get("name")?.toString();
-    const address = formData.get("address")?.toString();
-    const dateStr = formData.get("date")?.toString();
-    const content = formData.get("description")?.toString();
-    const imageUrl = formData.get("imageUrl")?.toString();
-    const lat = parseFloat(formData.get("lat")?.toString() || "0");
-    const lng = parseFloat(formData.get("lng")?.toString() || "0");
-
-    if (!title || !address) {
-        throw new Error("Please enter both the place name and address.");
-    }
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const date = dateStr ? new Date(dateStr) : null;
-
-    if (date && date.getTime() > today.getTime()) {
-        throw new Error("Date is invalid.");
-    }
-
-    let location = await prisma.location.findFirst({
-        where: { address: address },
-    });
-
-    if (!location) {
-        location = await prisma.location.create({
-            data: {
-                address: address || "",
-                lat, 
-                lng,
-            },
-        });
-    }
+    const data = await preparePostData(formData);
 
     await prisma.post.create({
         data: {
-            title,
-            date,
-            content,
-            imageUrl,
+            ...data,
             userId: session.user.id,
-            locationId: location.id,
         },
     });
 

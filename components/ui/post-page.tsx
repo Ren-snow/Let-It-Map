@@ -105,7 +105,7 @@ export default function PostPageClient({ post }: PostPageClientProps) {
                 <Link href={`/posts`}>
                     <Button variant="customIndigo">
                         <Redo2  />
-                        Back to My Posts
+                        Back to Posts List
                     </Button>
                 </Link>
             </div>
