@@ -3,7 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import SignInButton from "@/components/ui/SignInButton";
 import { prisma } from "@/lib/prisma";
+import { Plus } from "lucide-react";
 import Link from "next/link";
+import BaseMap from "@/components/map/BaseMap";
 
 export default async function PostsPage() {
     const session = await auth();
@@ -33,9 +35,14 @@ export default async function PostsPage() {
     return (
         <div className="space-y-6 container mx-auto px-4 py-8">
             <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold tracking-tight">Post List</h1>
+                <h1 className="text-3xl font-bold tracking-tight">
+                    Posts List
+                </h1>
                 <Link href={"/posts/new"}>
-                    <Button variant="customIndigo">New Post</Button>
+                    <Button variant="customIndigo">
+                        <Plus />
+                        Add Post
+                    </Button>
                 </Link>
             </div>
             <Card>
@@ -95,6 +102,21 @@ export default async function PostsPage() {
                         ))}
                     </div>
                 )}
+            </div>
+            <div>
+                <h2 className="text-xl font-semibold mb-4">Map</h2>
+                <BaseMap
+                    center={
+                        posts.length > 0
+                            ? {
+                                  lat: posts[0].location.lat,
+                                  lng: posts[0].location.lng,
+                              }
+                            : { lat: 53.405471, lng: -2.979881 }
+                    }
+                    zoom={12}
+                    posts={posts}
+                />
             </div>
         </div>
     );
