@@ -21,9 +21,10 @@ type Props = {
     height?: string;
     posts?: Post[];
     children?: ReactNode;
+    onMarkerClick?: (postsAtMarker: Post[]) => void;
 };
 
-function BaseMap({ center, posts = [], children }: Props) {
+function BaseMap({ center, posts = [], children, onMarkerClick }: Props) {
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
         libraries,
@@ -54,6 +55,11 @@ function BaseMap({ center, posts = [], children }: Props) {
                         lng: post.location.lng,
                     }}
                     title={post.title}
+                    onClick={() => {
+                        if (onMarkerClick) {
+                            onMarkerClick([post]);
+                        }
+                    }}
                 />
             ))}
             {children}
