@@ -21,7 +21,7 @@ type Props = {
     height?: string;
     posts?: Post[];
     children?: ReactNode;
-    onMarkerClick?: (postsAtMarker: Post[]) => void;
+    onMarkerClick?: (postsAtMarker: Post) => void;
 };
 
 function BaseMap({ center, posts = [], children, onMarkerClick }: Props) {
@@ -57,7 +57,7 @@ function BaseMap({ center, posts = [], children, onMarkerClick }: Props) {
                     title={post.title}
                     onClick={() => {
                         if (onMarkerClick) {
-                            onMarkerClick([post]);
+                            onMarkerClick(post);
                         }
                     }}
                 />

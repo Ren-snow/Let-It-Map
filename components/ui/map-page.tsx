@@ -64,9 +64,9 @@ export default function MapClient({ posts, session }: MapClientProps) {
                             posts.filter(
                                 (p) =>
                                     p.location.lat ===
-                                        postsAtMarker[0].location.lat &&
+                                        postsAtMarker.location.lat &&
                                     p.location.lng ===
-                                        postsAtMarker[0].location.lng
+                                        postsAtMarker.location.lng
                             )
                         );
                     }}
@@ -98,7 +98,9 @@ export default function MapClient({ posts, session }: MapClientProps) {
                                                           ).toLocaleDateString()
                                                 }`}
                                             </p>
-                                            <p className="text-sm text-gray-500 line-clamp-1">User ID: {post.userId} </p>
+                                            <p className="text-sm text-gray-500 line-clamp-1">
+                                                User ID: {post.userId}{" "}
+                                            </p>
                                         </CardContent>
                                     </Card>
                                 </Link>
