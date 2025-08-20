@@ -18,6 +18,11 @@ export default function MapClient({ posts, session }: MapClientProps) {
     const [selectedPosts, setSelectedPosts] = useState<
         (Post & { location: Location })[]
     >([]);
+    const [mapCenter, setMapCenter] = useState(
+        posts.length > 0
+            ? { lat: posts[0].location.lat, lng: posts[0].location.lng }
+            : { lat: 53.405471, lng: -2.979881 }
+    );
     return (
         <div className="space-y-6 container mx-auto px-4 py-8">
             <div className="flex items-center justify-between">
@@ -49,17 +54,14 @@ export default function MapClient({ posts, session }: MapClientProps) {
             </Card>
             <div>
                 <BaseMap
-                    center={
-                        posts.length > 0
-                            ? {
-                                  lat: posts[0].location.lat,
-                                  lng: posts[0].location.lng,
-                              }
-                            : { lat: 53.405471, lng: -2.979881 }
-                    }
+                    center={mapCenter} 
                     zoom={12}
                     posts={posts}
                     onMarkerClick={(postsAtMarker) => {
+                        setMapCenter({
+                            lat: postsAtMarker.location.lat,
+                            lng: postsAtMarker.location.lng,
+                        });
                         setSelectedPosts(
                             posts.filter(
                                 (p) =>
