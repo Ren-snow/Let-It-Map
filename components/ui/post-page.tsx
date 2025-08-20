@@ -7,6 +7,7 @@ import { Button } from "./button";
 import { FilePenLine, Redo2 } from "lucide-react";
 import { useLoadScript, Libraries, Marker } from "@react-google-maps/api";
 import BaseMap from "../map/BaseMap";
+import { useSearchParams } from "next/navigation";
 
 const libraries: Libraries = ["places"];
 
@@ -15,13 +16,20 @@ interface PostWithLocation extends Post {
 }
 interface PostPageClientProps {
     post: PostWithLocation;
+    isOwner: boolean;
 }
 
-export default function PostPageClient({ post }: PostPageClientProps) {
+export default function PostPageClient({ post, isOwner }: PostPageClientProps) {
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
         libraries,
     });
+
+    const searchParams = useSearchParams();
+    const from = searchParams.get("from");
+    const backHref =
+        from === "map" ? "/map" : from === "posts" ? "/posts" : "/";
+
     if (loadError)
         return (
             <div className="flex items-center justify-center h-screen text-red-600 text-lg font-semibold">
@@ -76,14 +84,16 @@ export default function PostPageClient({ post }: PostPageClientProps) {
                             </div>
                         </div>
                     </div>
-                    <div>
-                        <Link href={`/posts/${post.id}/edit`}>
-                            <Button variant="customIndigo">
-                                <FilePenLine />
-                                Edit
-                            </Button>
-                        </Link>
-                    </div>
+                    {isOwner && (
+                        <div>
+                            <Link href={`/posts/${post.id}/edit`}>
+                                <Button variant="customIndigo">
+                                    <FilePenLine />
+                                    Edit
+                                </Button>
+                            </Link>
+                        </div>
+                    )}
                 </div>
                 <div className="flex flex-col items-start justify-between gap-3">
                     <div className="flex flex-col items-start justify-between">
@@ -102,10 +112,15 @@ export default function PostPageClient({ post }: PostPageClientProps) {
                 </BaseMap>
             </div>
             <div className="text-center">
-                <Link href={`/posts`}>
+                <Link href={backHref}>
                     <Button variant="customIndigo">
-                        <Redo2  />
-                        Back to Posts List
+                        <Redo2 />
+                        Back to{" "}
+                        {from === "map"
+                            ? "Map Page"
+                            : from === "posts"
+                            ? "Posts List"
+                            : "Home"}
                     </Button>
                 </Link>
             </div>

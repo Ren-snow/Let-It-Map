@@ -76,7 +76,7 @@ export default async function PostsPage() {
                 ) : (
                     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {sortedPosts.slice(0, 6).map((post, key) => (
-                            <Link key={key} href={`/posts/${post.id}`}>
+                            <Link key={key} href={`/posts/${post.id}?from=posts`}>
                                 <Card className="h-full hover:shadow-md transition">
                                     <CardHeader className="line-clamp-1 font-semibold">
                                         {post.title}

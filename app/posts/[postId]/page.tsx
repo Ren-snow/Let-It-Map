@@ -21,5 +21,7 @@ export default async function PostPage({
         return <div>Post not found.</div>;
     }
 
-    return <PostPageClient post={post} />;
+    const isOwner = post.userId === session.user?.id;
+
+    return <PostPageClient post={post} isOwner={isOwner} />;
 }

@@ -80,7 +80,7 @@ export default function MapClient({ posts, session }: MapClientProps) {
                         </h2>
                         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             {selectedPosts.map((post) => (
-                                <Link key={post.id} href={`/posts/${post.id}`}>
+                                <Link key={post.id} href={`/posts/${post.id}?from=map`}>
                                     <Card className="h-full hover:shadow-md transition">
                                         <CardHeader className="line-clamp-2 font-semibold">
                                             {post.title}
