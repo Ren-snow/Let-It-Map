@@ -10,6 +10,8 @@ import type { Post, Location } from "@prisma/client";
 import { useState, useTransition } from "react";
 import { useLoadScript, Libraries } from "@react-google-maps/api";
 import { updatePost } from "@/lib/actions/update-post";
+import { deletePost } from "@/lib/actions/delete-post";
+import { Trash2 } from "lucide-react";
 import Link from "next/link";
 
 interface PostWithLocation extends Post {
@@ -183,15 +185,33 @@ export default function EditForm({ post }: EditFormProps) {
                         </div>
 
                         <div className="flex flex-col justify-center gap-3 items-center">
-                            <Button
-                                variant="customIndigo"
-                                type="submit"
-                                className="font-bold w-full"
-                                disabled={isPending}
-                            >
-                                <RefreshCw />
-                                {isPending ? "Updating..." : "Update"}
-                            </Button>
+                            <div className="w-full flex gap-1">
+                                <Button
+                                    variant="customIndigo"
+                                    type="submit"
+                                    className="font-bold w-full flex-1 hover:bg-gray-300"
+                                    disabled={isPending}
+                                >
+                                    <RefreshCw />
+                                    {isPending ? "Updating..." : "Update"}
+                                </Button>
+                                <Button
+                                    type="button" 
+                                    onClick={async () => {
+                                        if (
+                                            confirm(
+                                                "Are you sure you want to delete this post?"
+                                            )
+                                        ) {
+                                            await deletePost(post.id);
+                                        }
+                                    }}
+                                    className="font-bold w-full flex-1 border border-gray-950 bg-gray-900 text-white cursor-pointer hover:bg-gray-300 hover:text-gray-900"
+                                >
+                                    <Trash2 />
+                                    Delete
+                                </Button>
+                            </div>
                             <Link href={`/posts/${post.id}`} className="w-full">
                                 <Button
                                     className="font-bold border w-full border-indigo-900 cursor-pointer bg-white hover:brightness-90"
@@ -200,6 +220,7 @@ export default function EditForm({ post }: EditFormProps) {
                                     Cancel
                                 </Button>
                             </Link>
+                            
                         </div>
                     </form>
                 </CardContent>
