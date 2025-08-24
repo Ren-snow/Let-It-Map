@@ -9,11 +9,8 @@ export default async function PostPage({
 }) {
     const { postId } = await params;
     const session = await auth();
-    if (!session) {
-        return <div>Please sign in.</div>;
-    }
     const post = await prisma.post.findFirst({
-        where: { id: postId, userId: session.user?.id },
+        where: { id: postId },
         include: { location: true },
     });
 
@@ -21,7 +18,7 @@ export default async function PostPage({
         return <div>Post not found.</div>;
     }
 
-    const isOwner = post.userId === session.user?.id;
+    const isOwner = post.userId === session?.user?.id;
 
     return <PostPageClient post={post} isOwner={isOwner} />;
 }

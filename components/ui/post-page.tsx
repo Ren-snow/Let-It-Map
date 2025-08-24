@@ -102,7 +102,7 @@ export default function PostPageClient({ post, isOwner }: PostPageClientProps) {
                     </div>
                     {post.content && (
                         <div className="flex flex-col items-start justify-between">
-                            <h2 className="font-bold text-lg">Your Comment</h2>
+                            <h2 className="font-bold text-lg">{isOwner ? "Your Experience" : "Experience"}</h2>
                             <p>{post.content}</p>
                         </div>
                     )}
