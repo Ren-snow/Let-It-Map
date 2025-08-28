@@ -18,6 +18,7 @@ type Post = {
 type Props = {
     center: { lat: number; lng: number };
     zoom?: number;
+    options?: object;
     height?: string;
     posts?: Post[];
     children?: ReactNode;
@@ -46,6 +47,9 @@ function BaseMap({ center, posts = [], children, onMarkerClick }: Props) {
             mapContainerStyle={{ width: "100%", height: "400px" }}
             center={center}
             zoom={12}
+            options={{
+                gestureHandling: "greedy",
+            }}
         >
             {posts.map((post) => (
                 <Marker
