@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 
 export default async function LandingPage() {
     const session = await auth();
-    const isLoggedIn = !!session?.user;
 
     return (
         <div className="flex flex-col min-h-screen">
