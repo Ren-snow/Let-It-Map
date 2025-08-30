@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import SignInButton from "@/components/ui/SignInButton";
+import PostsPageClient from "@/components/ui/posts-page";
 import { prisma } from "@/lib/prisma";
 import { Plus } from "lucide-react";
 import Link from "next/link";
@@ -16,12 +17,6 @@ export default async function PostsPage() {
         where: {
             userId: session?.user?.id,
         },
-    });
-
-    const sortedPosts = [...posts].sort((a, b) => {
-        const dateA = new Date(a.date ?? a.createdAt).getTime();
-        const dateB = new Date(b.date ?? b.createdAt).getTime();
-        return dateB - dateA;
     });
 
     if (!session) {
@@ -81,36 +76,7 @@ export default async function PostsPage() {
                             </CardContent>
                         </Card>
                     ) : (
-                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {sortedPosts.slice(0, 6).map((post, key) => (
-                                <Link
-                                    key={key}
-                                    href={`/posts/${post.id}?from=posts`}
-                                >
-                                    <Card className="h-full hover:shadow-md transition">
-                                        <CardHeader className="line-clamp-1 font-semibold">
-                                            {post.title}
-                                        </CardHeader>
-                                        <CardContent>
-                                            <p className="text-sm text-gray-500 line-clamp-3 mb-2">
-                                                {post.location.address}
-                                            </p>
-                                            <p className="text-sm text-gray-500 line-clamp-1">
-                                                {`Date: ${
-                                                    post.date
-                                                        ? new Date(
-                                                              post.date
-                                                          ).toLocaleDateString()
-                                                        : new Date(
-                                                              post.createdAt
-                                                          ).toLocaleDateString()
-                                                }`}
-                                            </p>
-                                        </CardContent>
-                                    </Card>
-                                </Link>
-                            ))}
-                        </div>
+                        <PostsPageClient posts={posts}/>
                     )}
                 </div>
                 <div>
