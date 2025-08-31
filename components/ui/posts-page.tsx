@@ -59,15 +59,43 @@ export default function PostsPageClient({ posts }: Props) {
             </div>
             {sortedPosts.length >= 6 && (
                 <div className="w-full flex justify-center gap-4">
-                    {Array.from({ length: totalPages }).map((_, i) => (
-                        <button
-                            key={i}
-                            onClick={() => setPostsSectionNum(i + 1)}
-                            className="cursor-pointer px-2 py-1 rounded bg-indigo-900 text-white shadow-none "
-                        >
-                            {i + 1}
-                        </button>
-                    ))}
+                    {totalPages < 5 ? (
+                        Array.from({ length: totalPages }).map((_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => setPostsSectionNum(i + 1)}
+                                className={
+                                    i + 1 === postsSectionNum
+                                        ? "cursor-pointer px-2 py-1 rounded border border-indigo-900 bg-white text-indigo-900 shadow-none"
+                                        : "cursor-pointer px-2 py-1 rounded border border-indigo-900 bg-indigo-900 text-white shadow-none"
+                                }
+                            >
+                                {i + 1}
+                            </button>
+                        ))
+                    ) : (
+                        <>
+                            <button
+                                onClick={() =>
+                                    setPostsSectionNum(postsSectionNum - 1)
+                                }
+                                disabled={postsSectionNum === 1}
+                                className="px-3 py-1 rounded border border-indigo-900 bg-indigo-900 text-white disabled:opacity-50"
+                            >
+                                ◀
+                            </button>
+                            <span className="px-3 py-1">{postsSectionNum}</span>
+                            <button
+                                onClick={() =>
+                                    setPostsSectionNum(postsSectionNum + 1)
+                                }
+                                disabled={postsSectionNum === totalPages}
+                                className="px-3 py-1 rounded border border-indigo-900 bg-indigo-900 text-white disabled:opacity-50"
+                            >
+                                ▶
+                            </button>
+                        </>
+                    )}
                 </div>
             )}
         </div>
