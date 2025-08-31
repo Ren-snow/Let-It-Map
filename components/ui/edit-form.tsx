@@ -87,144 +87,152 @@ export default function EditForm({ post }: EditFormProps) {
         );
     }
     return (
-        <div className="max-w-lg mx-auto mt-10 flex flex-col gap-8">
-            <Card>
-                <CardHeader className="font-bold">Edit Post</CardHeader>
-                <CardContent>
-                    <form
-                        className="flex flex-col gap-4"
-                        onSubmit={handleSubmit}
-                    >
-                        <div>
-                            <label
-                                htmlFor=""
-                                className="block font-medium text-gray-700 mb-1"
-                            >
-                                Place Name
-                                <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                name="name"
-                                defaultValue={post.title}
-                                placeholder="Abbey Road..."
-                                className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label className="block font-medium text-gray-700 mb-1">
-                                Address
-                                <span className="text-red-500">*</span>
-                            </label>
-
-                            <AddressInput
-                                onSelectAddress={handleAddressSelect}
-                                initialAddress={post.location.address}
-                            />
-                        </div>
-                        <div>
-                            <label
-                                htmlFor=""
-                                className="block font-medium text-gray-700 mb-1"
-                            >
-                                Visited On
-                            </label>
-                            <input
-                                type="date"
-                                name="date"
-                                defaultValue={
-                                    post?.date
-                                        ? post.date.toISOString().split("T")[0]
-                                        : ""
-                                }
-                                className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
-                        <div>
-                            <label
-                                htmlFor=""
-                                className="block font-medium text-gray-700 mb-1"
-                            >
-                                My Experience
-                            </label>
-                            <textarea
-                                defaultValue={post?.content ?? ""}
-                                name="description"
-                                className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                        </div>
-                        <div>
-                            <label>Place Image</label>
-
-                            {imageUrl && (
-                                <Image
-                                    src={imageUrl}
-                                    alt="Image Preview"
-                                    className="w-full mb-4 object-cover rounded-xl"
-                                    width={300}
-                                    height={200}
-                                />
-                            )}
-                            <UploadButton
-                                endpoint="imageUploader"
-                                content={{ button: <div>Change Image</div> }}
-                                onClientUploadComplete={(res) => {
-                                    if (
-                                        res &&
-                                        res.length > 0 &&
-                                        res[0].ufsUrl
-                                    ) {
-                                        setImageUrl(res[0].ufsUrl);
-                                    }
-                                }}
-                                onUploadError={(error: Error) => {
-                                    console.error("Upload error: ", error);
-                                }}
-                            />
-                        </div>
-
-                        <div className="flex flex-col justify-center gap-3 items-center">
-                            <div className="w-full flex gap-1">
-                                <Button
-                                    variant="customIndigo"
-                                    type="submit"
-                                    className="font-bold w-full flex-1 hover:bg-gray-300"
-                                    disabled={isPending}
+        <div className="container mx-auto px-4 py-8">
+            <div className="max-w-lg mx-auto flex flex-col gap-8">
+                <Card>
+                    <CardHeader className="font-bold">Edit Post</CardHeader>
+                    <CardContent>
+                        <form
+                            className="flex flex-col gap-4"
+                            onSubmit={handleSubmit}
+                        >
+                            <div>
+                                <label
+                                    htmlFor=""
+                                    className="block font-medium text-gray-700 mb-1"
                                 >
-                                    <RefreshCw />
-                                    {isPending ? "Updating..." : "Update"}
-                                </Button>
-                                <Button
-                                    type="button" 
-                                    onClick={async () => {
+                                    Place Name
+                                    <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    defaultValue={post.title}
+                                    placeholder="Abbey Road..."
+                                    className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block font-medium text-gray-700 mb-1">
+                                    Address
+                                    <span className="text-red-500">*</span>
+                                </label>
+
+                                <AddressInput
+                                    onSelectAddress={handleAddressSelect}
+                                    initialAddress={post.location.address}
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor=""
+                                    className="block font-medium text-gray-700 mb-1"
+                                >
+                                    Visited On
+                                </label>
+                                <input
+                                    type="date"
+                                    name="date"
+                                    defaultValue={
+                                        post?.date
+                                            ? post.date
+                                                  .toISOString()
+                                                  .split("T")[0]
+                                            : ""
+                                    }
+                                    className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    htmlFor=""
+                                    className="block font-medium text-gray-700 mb-1"
+                                >
+                                    My Experience
+                                </label>
+                                <textarea
+                                    defaultValue={post?.content ?? ""}
+                                    name="description"
+                                    className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                            </div>
+                            <div>
+                                <label>Place Image</label>
+
+                                {imageUrl && (
+                                    <Image
+                                        src={imageUrl}
+                                        alt="Image Preview"
+                                        className="w-full mb-4 object-cover rounded-xl"
+                                        width={300}
+                                        height={200}
+                                    />
+                                )}
+                                <UploadButton
+                                    endpoint="imageUploader"
+                                    content={{
+                                        button: <div>Change Image</div>,
+                                    }}
+                                    onClientUploadComplete={(res) => {
                                         if (
-                                            confirm(
-                                                "Are you sure you want to delete this post?"
-                                            )
+                                            res &&
+                                            res.length > 0 &&
+                                            res[0].ufsUrl
                                         ) {
-                                            await deletePost(post.id);
+                                            setImageUrl(res[0].ufsUrl);
                                         }
                                     }}
-                                    className="font-bold w-full flex-1 border border-gray-950 bg-gray-900 text-white cursor-pointer hover:bg-gray-300 hover:text-gray-900"
-                                >
-                                    <Trash2 />
-                                    Delete
-                                </Button>
+                                    onUploadError={(error: Error) => {
+                                        console.error("Upload error: ", error);
+                                    }}
+                                />
                             </div>
-                            <Link href={`/posts/${post.id}`} className="w-full">
-                                <Button
-                                    className="font-bold border w-full border-indigo-900 cursor-pointer bg-white hover:brightness-90"
-                                    disabled={isPending}
+
+                            <div className="flex flex-col justify-center gap-3 items-center">
+                                <div className="w-full flex gap-1">
+                                    <Button
+                                        variant="customIndigo"
+                                        type="submit"
+                                        className="font-bold w-full flex-1 hover:bg-gray-300"
+                                        disabled={isPending}
+                                    >
+                                        <RefreshCw />
+                                        {isPending ? "Updating..." : "Update"}
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        onClick={async () => {
+                                            if (
+                                                confirm(
+                                                    "Are you sure you want to delete this post?"
+                                                )
+                                            ) {
+                                                await deletePost(post.id);
+                                            }
+                                        }}
+                                        className="font-bold w-full flex-1 border border-gray-950 bg-gray-900 text-white cursor-pointer hover:bg-gray-300 hover:text-gray-900"
+                                    >
+                                        <Trash2 />
+                                        Delete
+                                    </Button>
+                                </div>
+                                <Link
+                                    href={`/posts/${post.id}`}
+                                    className="w-full"
                                 >
-                                    Cancel
-                                </Button>
-                            </Link>
-                            
-                        </div>
-                    </form>
-                </CardContent>
-            </Card>
+                                    <Button
+                                        className="font-bold border w-full border-indigo-900 cursor-pointer bg-white hover:brightness-90"
+                                        disabled={isPending}
+                                    >
+                                        Cancel
+                                    </Button>
+                                </Link>
+                            </div>
+                        </form>
+                    </CardContent>
+                </Card>
+            </div>
         </div>
     );
 }
