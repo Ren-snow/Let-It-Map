@@ -23,6 +23,13 @@ export default function MapClient({ posts, session }: MapClientProps) {
             ? { lat: posts[0].location.lat, lng: posts[0].location.lng }
             : { lat: 53.405471, lng: -2.979881 }
     );
+
+    const [selectedPostsPage, setSelectedPostsPage] = useState(1);
+    const POSTS_PER_PAGE = 6;
+    const start = (selectedPostsPage - 1) * POSTS_PER_PAGE;
+    const end = selectedPostsPage * POSTS_PER_PAGE;
+    const visibleSelectedPosts = selectedPosts.slice(start, end);
+
     return (
         <div className="space-y-6 container mx-auto px-4 py-8">
             <div className="flex items-center justify-between">
@@ -54,7 +61,7 @@ export default function MapClient({ posts, session }: MapClientProps) {
             </Card>
             <div>
                 <BaseMap
-                    center={mapCenter} 
+                    center={mapCenter}
                     zoom={12}
                     posts={posts}
                     onMarkerClick={(postsAtMarker) => {
@@ -79,8 +86,11 @@ export default function MapClient({ posts, session }: MapClientProps) {
                             Posts at this address ({selectedPosts.length})
                         </h2>
                         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {selectedPosts.map((post) => (
-                                <Link key={post.id} href={`/posts/${post.id}?from=map`}>
+                            {visibleSelectedPosts.map((post) => (
+                                <Link
+                                    key={post.id}
+                                    href={`/posts/${post.id}?from=map`}
+                                >
                                     <Card className="h-full hover:shadow-md transition">
                                         <CardHeader className="line-clamp-2 font-semibold">
                                             {post.title}
@@ -108,6 +118,41 @@ export default function MapClient({ posts, session }: MapClientProps) {
                                 </Link>
                             ))}
                         </div>
+                        {selectedPosts.length > POSTS_PER_PAGE && (
+                            <div className="flex justify-center gap-2 mt-4">
+                                <button
+                                    onClick={() =>
+                                        setSelectedPostsPage(
+                                            selectedPostsPage - 1
+                                        )
+                                    }
+                                    disabled={selectedPostsPage === 1}
+                                    className="px-3 py-1 rounded border border-indigo-900 bg-indigo-900 text-white disabled:opacity-50"
+                                >
+                                    ◀
+                                </button>
+                                <span className="px-3 py-1">
+                                    {selectedPostsPage}
+                                </span>
+                                <button
+                                    onClick={() =>
+                                        setSelectedPostsPage(
+                                            selectedPostsPage + 1
+                                        )
+                                    }
+                                    disabled={
+                                        selectedPostsPage ===
+                                        Math.ceil(
+                                            selectedPosts.length /
+                                                POSTS_PER_PAGE
+                                        )
+                                    }
+                                    className="px-3 py-1 rounded border border-indigo-900 bg-indigo-900 text-white disabled:opacity-50"
+                                >
+                                    ▶
+                                </button>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
