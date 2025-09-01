@@ -10,9 +10,7 @@ export default async function LandingPage() {
 
     return (
         <div className="flex flex-col min-h-screen">
-            {/* Main Content */}
             <main className="flex-1">
-                {/* Hero Section */}
                 <section className="relative bg-gradient-to-b from-white to-blue-50 py-20 md:py-32">
                     <div className="container mx-auto px-4">
                         <div className="max-w-3xl mx-auto text-center">
@@ -26,17 +24,21 @@ export default async function LandingPage() {
                             </p>
                         </div>
                     </div>
-                    {/* Decorative Clipped Background at the Bottom */}
-                    <div
-                        className="absolute bottom-0 left-0 right-0 h-24 bg-white"
-                        style={{
-                            clipPath:
-                                "polygon(0 100%, 100% 100%, 100% 0, 0 100%)",
-                        }}
-                    />
+                    <div className="absolute bottom-0 left-0 right-0">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 1440 320"
+                            className="w-full h-24"
+                            preserveAspectRatio="none"
+                        >
+                            <path
+                                fill="white"
+                                d="M0,160 C480,320 960,0 1440,160 L1440,320 L0,320 Z"
+                            ></path>
+                        </svg>
+                    </div>
                 </section>
 
-                {/* Features Section */}
                 <section className="py-16 md:py-24 bg-white">
                     <div className="container mx-auto px-4">
                         <h2 className="text-3xl font-bold text-center mb-12">
@@ -83,11 +85,10 @@ export default async function LandingPage() {
                     </div>
                 </section>
 
-                {/* Call to Action Section */}
                 <section className="py-16 md:py-24 bg-indigo-900">
                     <div className="container mx-auto px-4 text-center">
                         <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                            Join the Beatles Map Community
+                            Come Together on Let It Map
                         </h2>
                         <p className="text-xl text-blue-50 mb-8 max-w-2xl mx-auto">
                             Sign in to share your own stories, connect with
@@ -112,8 +113,6 @@ export default async function LandingPage() {
                     </div>
                 </section>
             </main>
-
-            {/* Footer */}
         </div>
     );
 }
