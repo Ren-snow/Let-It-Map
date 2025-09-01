@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Let It Map
 
-## Getting Started
+**Let It Map**はビートルズの聖地巡礼体験を共有する、ファンコミュニティ向けWebアプリケーションです。
 
-First, run the development server:
+2024年、ビートルズの聖地を巡るために渡英した私自身の経験から、「**ビートルズファンが、自分の訪れたスポットや体験を共有し、他のファンと繋がれる場があればいいのに**」という想いで開発しました。
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+本アプリは、ユーザーがビートルズに関連するスポットを地図上に投稿し、他のユーザーと写真や体験談を共有できるサービスです。
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 実際に使ってみる
+[https://sr-let-it-map.vercel.app](https://sr-let-it-map.vercel.app)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 使用技術（Tech Stack）
+- **Frontend:** TypeScript, Next.js 15, React 19, Tailwind CSS  
+- **Backend:** TypeScript, Next.js API Routes, NextAuth.js, Prisma  
+- **Database:** PostgreSQL (Neon)  
+- **External Services:** Google Maps JavaScript API / Places API, UploadThing  
+- **Deployment:** Vercel  
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 主な機能
+- **ユーザー認証:** **NextAuth.js** を利用した **GitHub / Google** OAuth認証を実装。セッション管理も行い、ログイン状態を維持。  
+- **地図表示:** **Google Maps API** を利用し、ビートルズ関連スポットを地図上にマーカーで表示。  
+- **投稿の表示:** 地図上のマーカーをクリックすると、そのスポットに紐づく写真や体験談を取得・表示。  
+- **投稿機能:** ユーザーは自身の訪れたスポットを投稿・編集・削除可能。**Google Places Autocomplete** を利用することで、住所の入力ミスを防ぎ、投稿の手間を軽減。  
 
-## Learn More
+## 工夫した点
+- **スキーマ設計:** 同じ場所の投稿が重複しないよう、**場所情報**と**投稿情報**を分けて設計。  
+- **投稿削除時の整合性:** 投稿削除時、関連する位置情報が他の投稿で使われていないか確認し、**孤児データ**を防止。  
+- **ページネーション:** 投稿数が増えた場合にページ切替を実装。少ないページ数では全ページ表示、多い場合は省略表示に対応。  
+- **住所入力:** AutoComplete を導入して住所入力の手間を軽減。入力ミスや存在しない住所の投稿を防止。  
+- **UIコンポーネントの活用:** 既存のカード・ボタンコンポーネントを利用し、複数箇所で同じデザインを再利用。Tailwind CSS と組み合わせ、スタイルの統一と開発効率を向上。  
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 今後の展望
+- 言語切り替え機能  
+- 投稿に対するコメント機能  
+- ユーザー名やプロフィール画像設定機能の追加  
