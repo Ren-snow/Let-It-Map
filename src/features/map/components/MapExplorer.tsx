@@ -25,7 +25,7 @@ function isWithin(
   return inLatitude && inLongitude;
 }
 
-export function MapScreen({ locations }: { locations: MapLocation[] }) {
+export function MapExplorer({ locations }: { locations: MapLocation[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [viewportHeight, setViewportHeight] = useState(0);
   const [selected, setSelected] = useState<MapLocation | null>(null);

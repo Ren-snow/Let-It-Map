@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
-import { db } from "@/lib/db";
-import { locations, posts, users } from "@/lib/db/schema";
+import { db } from "@/server/db";
+import { locations, posts, users } from "@/server/db/schema";
 import type { MapLocation } from "@/server/map/types";
 
 export async function getMapLocations(): Promise<MapLocation[]> {

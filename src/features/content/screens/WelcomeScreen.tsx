@@ -199,7 +199,7 @@ function FloatingPin({
 /* ================================================================
    Page
    ================================================================ */
-export default function Home() {
+export function WelcomeScreen() {
   useScrollReveal();
 
   return (

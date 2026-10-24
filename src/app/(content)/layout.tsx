@@ -2,9 +2,9 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 
 /**
- * Marketing shell — the classic website chrome, kept off the app shell.
+ * Content shell — the classic website chrome, kept off the app shell.
  */
-export default function MarketingLayout({
+export default function ContentLayout({
   children,
 }: {
   children: React.ReactNode;

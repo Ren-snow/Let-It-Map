@@ -47,16 +47,60 @@ const eslintConfig = defineConfig([
   },
   // UI must not talk to the database directly.
   {
-    files: ["src/app/**/*.{ts,tsx}", "src/features/**/*.{ts,tsx}", "src/components/**/*.{ts,tsx}"],
+    files: [
+      "src/app/**/*.{ts,tsx}",
+      "src/features/**/*.{ts,tsx}",
+      "src/components/**/*.{ts,tsx}",
+    ],
     rules: {
       "no-restricted-imports": [
         "error",
         {
           patterns: [
             {
-              group: ["@/lib/db", "@/lib/db/*", "drizzle-orm", "drizzle-orm/*"],
+              group: ["@/server/db", "@/server/db/*", "drizzle-orm", "drizzle-orm/*"],
               message:
                 "Database access belongs in src/server/. Call a query or an action instead.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  // Routing layer: pages map a URL to one screen and nothing else.
+  {
+    files: ["src/app/**/page.tsx", "src/app/**/layout.tsx"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/server/*/queries", "@/server/*/mutations", "@/server/db", "@/server/db/*"],
+              message:
+                "app/ is routing only. Fetch inside features/{domain}/screens/ instead.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  // Presentational components receive data as props.
+  {
+    files: ["src/features/*/components/**/*.{ts,tsx}", "src/components/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/server/*/queries", "@/server/*/mutations"],
+              message:
+                "Data fetching belongs in features/{domain}/screens/. Take it as a prop.",
+            },
+            {
+              group: ["@/server/db", "@/server/db/*", "drizzle-orm", "drizzle-orm/*"],
+              message: "Database access belongs in src/server/.",
             },
           ],
         },

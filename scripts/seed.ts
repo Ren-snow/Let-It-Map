@@ -15,7 +15,7 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import { inArray, like } from "drizzle-orm";
 import postgres from "postgres";
 
-import * as schema from "../src/lib/db/schema";
+import * as schema from "../src/server/db/schema";
 import {
   SEED_PLACES,
   SEED_POSTS,

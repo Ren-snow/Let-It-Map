@@ -1,6 +1,6 @@
 import { eq, desc, count } from "drizzle-orm";
-import { db } from "@/lib/db";
-import { posts, locations, users } from "@/lib/db/schema";
+import { db } from "@/server/db";
+import { posts, locations, users } from "@/server/db/schema";
 import type { PostDetail, PostWithDetails } from "@/server/post/types";
 import type { PaginatedResult } from "@/types/common";
 

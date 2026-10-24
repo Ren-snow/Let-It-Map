@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
-import { db } from "@/lib/db";
-import { posts, locations } from "@/lib/db/schema";
+import { db } from "@/server/db";
+import { posts, locations } from "@/server/db/schema";
 import type { CreatePostInput } from "@/server/schema/post";
 
 /**
