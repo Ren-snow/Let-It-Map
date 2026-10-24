@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { createPost } from "@/server/post/mutations";
+import * as postService from "@/server/post/service";
 import { createPostInput } from "@/server/schema/post";
 
 type CreatePostValues = {
@@ -74,7 +74,7 @@ export async function createPostAction(
     return { error: parsed.error.issues[0].message, values };
   }
 
-  await createPost(userId, parsed.data);
+  await postService.create(userId, parsed.data);
 
   // "/" is the map screen and is prerendered, so a new pin needs it invalidated too.
   revalidatePath("/");

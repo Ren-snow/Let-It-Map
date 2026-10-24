@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, MapPin, Navigation } from "lucide-react";
-import { getPostById } from "@/server/post/queries";
+import * as postService from "@/server/post/service";
 import { MapProvider, LocationMiniMap } from "@/features/map";
 
 export type PostDetailScreenProps = {
@@ -10,7 +10,7 @@ export type PostDetailScreenProps = {
 
 export async function PostDetailScreen({ params }: PostDetailScreenProps) {
   const { id } = await params;
-  const post = await getPostById(id);
+  const post = await postService.get(id);
 
   if (!post) notFound();
 

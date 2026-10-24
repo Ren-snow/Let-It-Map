@@ -1,4 +1,4 @@
-import { getMapLocations } from "@/server/map/queries";
+import * as mapService from "@/server/map/service";
 import { MapProvider } from "../components/MapProvider";
 import { MapExplorer } from "../components/MapExplorer";
 
@@ -6,7 +6,7 @@ import { MapExplorer } from "../components/MapExplorer";
  * Launch screen. The map is the background layer; everything else floats on it.
  */
 export async function MapScreen() {
-  const locations = await getMapLocations();
+  const locations = await mapService.listPins();
 
   return (
     <div className="h-[var(--app-height)] w-full">

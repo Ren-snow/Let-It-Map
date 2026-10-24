@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { PlusIcon, FileText } from "lucide-react";
 import { auth } from "@/lib/auth";
-import { getPaginatedPosts } from "@/server/post/queries";
+import * as postService from "@/server/post/service";
 import PostCard from "../components/PostCard";
 import PostTabs from "../components/PostTabs";
 import Pagination from "../components/Pagination";
@@ -19,7 +19,7 @@ export async function PostListScreen({ searchParams }: PostListScreenProps) {
 
   const showMine = currentTab === "mine" && !!session?.user;
 
-  const result = await getPaginatedPosts({
+  const result = await postService.list({
     page: currentPage,
     pageSize: 20,
     userId: showMine ? session?.user?.id : undefined,
