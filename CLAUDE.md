@@ -31,7 +31,8 @@ src/
 │   ├── (content)/        # Header + Footer website chrome
 │   └── api/
 ├── components/       # Shared UI components (layout/, ui/)
-├── server/           # Domain layer — three tiers, all business logic & DB access
+├── server/           # Backend — three tiers
+│   ├── api/              # Adapter: Hono routes, auth middleware, error mapping
 │   ├── db/               # Drizzle client + schema
 │   ├── schema/           # Zod input schemas
 │   ├── errors.ts         # Domain errors services throw
@@ -60,12 +61,13 @@ src/
 - **Routing layer:** `app/**/page.tsx` forwards the page props to one screen and nothing else — no type declarations, no awaiting, no data fetching. A screen owns its own props type (`PostListScreenProps`) and awaits `params`/`searchParams` itself. Screens with no props are a one-line re-export: `export { ProfileScreen as default } from "@/features/profile"`.
 - **Feature entry points:** every feature has an `index.ts` listing what the outside may use. Cross-feature imports go through `@/features/<name>`; inside a feature use relative paths. Deep imports from outside are an ESLint error.
 - **Screens:** `features/{domain}/screens/` is the only place in the UI that fetches data or calls `notFound()`/`redirect()`. Components take data as props. ESLint-enforced.
-- **Three tiers:** adapters (`server/*/actions.ts`, later `server/api/`) do auth → validate → call one service → translate. `service.ts` holds business rules and owns the transaction boundary but writes no SQL. `repository.ts` writes SQL and maps rows to domain types, taking `DbClient` as its first argument. All four boundaries are ESLint-enforced.
+- **Three tiers:** the adapter (`server/api/`) does auth → validate → call one service → translate. `service.ts` holds business rules and owns the transaction boundary but writes no SQL. `repository.ts` writes SQL and maps rows to domain types, taking `DbClient` as its first argument. All boundaries are ESLint-enforced.
+- **Writes go over HTTP:** a mutation is a Hono route under `server/api/routes/`, called from the client through the typed `api` client in `lib/api/client.ts`. Server Actions are reserved for sign-in/out, which needs `redirect`. This is what lets a mobile client reuse the same backend later.
 - **Crossing domains:** a service may call another domain's **service**, never its repository. Inside a domain use relative imports (`./repository`); across domains use `@/server/<domain>/service`.
 - **Reads vs writes:** a read returns `null` when something is absent; a write throws a domain error from `server/errors.ts`. Only the adapter turns those into HTTP status or UI state.
-- **Data fetching:** screens call `server/*/service.ts` directly — reads stay in-process, no HTTP hop.
-- **Validation:** Parse all external input with a Zod schema from `server/schema/` at the adapter boundary. Never cast `FormData` values with `as string`.
-- **Form state:** Use React 19 `useActionState` hook to connect forms to Server Actions — provides `[state, formAction, isPending]`.
+- **Reads stay in-process:** screens call `server/*/service.ts` directly — no HTTP hop, because the map and feed's first paint is the thing that matters most.
+- **Form state:** a client form owns its own `isSubmitting`/`error` state and posts through `api`. `revalidatePath` is called inside the route; the client follows with `router.refresh()`.
+- **Validation:** Every route validates with `zValidator` against a schema in `server/schema/`. The same schemas are importable from the client.
 - **App shell:** `(app)` screens are full screen with a bottom `TabBar`; size them with `--app-height` (`100dvh` minus the tab bar), never `h-screen`/`vh`. `(content)` keeps the Header/Footer website chrome.
 - **Styling:** Tailwind utility classes. Custom design tokens defined in `globals.css` (Burnt Sienna accent, Forest Teal secondary, warm stone palette).
 - **DB schema:** Defined in `src/server/db/schema.ts`. UUIDs for primary keys, snake_case column names, cascade deletes on foreign keys.

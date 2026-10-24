@@ -1,70 +1,87 @@
 "use client";
 
-import { useActionState, useRef, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import {
-  createPostAction,
-  type CreatePostState,
-} from "@/server/post/actions";
+import { useRouter } from "next/navigation";
+import { api } from "@/lib/api/client";
 import { Modal } from "@/components/ui/Modal";
 import { PlaceAutocompleteInput } from "./PlaceAutocompleteInput";
 import type { PlaceDetails } from "@/hooks/usePlacePredictions";
+
+type Draft = {
+  title: string;
+  description: string;
+  location: {
+    placeId: string;
+    name: string;
+    address: string;
+    latitude: number;
+    longitude: number;
+  };
+};
+
+function readDraft(form: HTMLFormElement): Draft {
+  const fd = new FormData(form);
+  const value = (name: string) => String(fd.get(name) ?? "");
+
+  return {
+    title: value("title"),
+    description: value("description"),
+    location: {
+      placeId: value("placeId"),
+      name: value("locationName"),
+      address: value("locationAddress"),
+      latitude: Number(value("latitude")),
+      longitude: Number(value("longitude")),
+    },
+  };
+}
 
 export function CreatePostForm({
   initialPlace,
 }: {
   initialPlace?: PlaceDetails | null;
 }) {
-  const [state, formAction, isPending] = useActionState<
-    CreatePostState,
-    FormData
-  >(createPostAction, undefined);
-  const formRef = useRef<HTMLFormElement>(null);
-  const [preview, setPreview] = useState<{
-    title: string;
-    description: string;
-    locationName: string;
-    locationAddress: string;
-  } | null>(null);
-  const confirmed = useRef(false);
+  const router = useRouter();
+  const [preview, setPreview] = useState<Draft | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // After a rejected submit, restore the place the user had already picked
-  // instead of making them search for it again.
-  const seededPlace: PlaceDetails | null = state?.values?.placeId
-    ? {
-        placeId: state.values.placeId,
-        name: state.values.locationName,
-        address: state.values.locationAddress,
-        lat: Number(state.values.latitude),
-        lng: Number(state.values.longitude),
+  async function submit(draft: Draft) {
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const response = await api.api.posts.$post({ json: draft });
+
+      if (!response.ok) {
+        const body = (await response.json()) as { error?: string };
+        setError(body.error ?? "Could not create the post");
+        return;
       }
-    : (initialPlace ?? null);
+
+      // The feed is a server component, so refresh before navigating to it.
+      router.push("/posts");
+      router.refresh();
+    } catch {
+      setError("Could not reach the server. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <>
       <form
-        ref={formRef}
-        action={formAction}
         onSubmit={(e) => {
-          // Allow submit only after user confirms in the modal
-          if (confirmed.current) {
-            confirmed.current = false;
-            return;
-          }
           e.preventDefault();
-          const fd = new FormData(e.currentTarget);
-          setPreview({
-            title: fd.get("title") as string,
-            description: fd.get("description") as string,
-            locationName: fd.get("locationName") as string,
-            locationAddress: fd.get("locationAddress") as string,
-          });
+          setPreview(readDraft(e.currentTarget));
         }}
         className="rounded-2xl border border-border bg-surface p-6 sm:p-8"
       >
-        {state?.error && (
+        {error && (
           <div className="mb-6 rounded-xl bg-accent-light px-4 py-3 text-sm text-accent">
-            {state.error}
+            {error}
           </div>
         )}
 
@@ -83,7 +100,6 @@ export function CreatePostForm({
               type="text"
               required
               maxLength={100}
-              defaultValue={state?.values?.title}
               placeholder="e.g. Abbey Road Studios"
               className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-faint transition-colors focus:border-accent focus:outline-none"
             />
@@ -103,7 +119,6 @@ export function CreatePostForm({
               required
               maxLength={2000}
               rows={5}
-              defaultValue={state?.values?.description}
               placeholder="Share your experience at this place..."
               className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-faint transition-colors focus:border-accent focus:outline-none resize-none"
             />
@@ -122,7 +137,6 @@ export function CreatePostForm({
               name="locationName"
               type="text"
               required
-              defaultValue={state?.values?.locationName}
               placeholder="e.g. Abbey Road, London"
               className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-faint transition-colors focus:border-accent focus:outline-none"
             />
@@ -141,13 +155,12 @@ export function CreatePostForm({
               id="locationAddress"
               name="locationAddress"
               type="text"
-              defaultValue={state?.values?.locationAddress}
               placeholder="e.g. 3 Abbey Road, St John's Wood, London NW8 9AY"
               className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-faint transition-colors focus:border-accent focus:outline-none"
             />
           </div> */}
 
-          <PlaceAutocompleteInput initialPlace={seededPlace} />
+          <PlaceAutocompleteInput initialPlace={initialPlace ?? null} />
         </div>
 
         {/* Actions */}
@@ -160,10 +173,10 @@ export function CreatePostForm({
           </Link>
           <button
             type="submit"
-            disabled={isPending}
+            disabled={isSubmitting}
             className="rounded-xl bg-accent px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:bg-accent-hover hover:shadow-xl hover:shadow-accent/25 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none"
           >
-            {isPending ? "Creating..." : "Create Post"}
+            {isSubmitting ? "Creating..." : "Create Post"}
           </button>
         </div>
       </form>
@@ -192,13 +205,13 @@ export function CreatePostForm({
               <div>
                 <dt className="font-medium text-foreground">Location Name</dt>
                 <dd className="mt-0.5 text-muted">
-                  {preview.locationName}
+                  {preview.location.name}
                 </dd>
               </div>
               <div>
                 <dt className="font-medium text-foreground">Location Address</dt>
                 <dd className="mt-0.5 text-muted">
-                  {preview.locationAddress || "-"}
+                  {preview.location.address || "-"}
                 </dd>
               </div>
             </dl>
@@ -214,9 +227,9 @@ export function CreatePostForm({
               <button
                 type="button"
                 onClick={() => {
+                  const draft = preview;
                   setPreview(null);
-                  confirmed.current = true;
-                  formRef.current?.requestSubmit();
+                  void submit(draft);
                 }}
                 className="rounded-xl bg-accent px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:bg-accent-hover hover:shadow-xl hover:shadow-accent/25 active:scale-[0.98]"
               >
