@@ -1,10 +1,5 @@
-import { PostDetailScreen } from "@/features/post/screens/PostDetailScreen";
+import { PostDetailScreen, type PostDetailScreenProps } from "@/features/post";
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  return <PostDetailScreen id={id} />;
+export default function Page(props: PostDetailScreenProps) {
+  return <PostDetailScreen {...props} />;
 }

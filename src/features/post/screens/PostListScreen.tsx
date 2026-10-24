@@ -2,17 +2,17 @@ import Link from "next/link";
 import { PlusIcon, FileText } from "lucide-react";
 import { auth } from "@/lib/auth";
 import { getPaginatedPosts } from "@/server/post/queries";
-import PostCard from "@/features/post/components/PostCard";
-import PostTabs from "@/features/post/components/PostTabs";
-import Pagination from "@/features/post/components/Pagination";
-import type { TabKey } from "@/features/post/components/PostTabs";
+import PostCard from "../components/PostCard";
+import PostTabs from "../components/PostTabs";
+import Pagination from "../components/Pagination";
+import type { TabKey } from "../components/PostTabs";
 
-export async function PostListScreen({
-  searchParams,
-}: {
-  searchParams: { tab?: string; page?: string };
-}) {
-  const { tab, page } = searchParams;
+export type PostListScreenProps = {
+  searchParams: Promise<{ tab?: string; page?: string }>;
+};
+
+export async function PostListScreen({ searchParams }: PostListScreenProps) {
+  const { tab, page } = await searchParams;
   const currentTab: TabKey = tab === "mine" ? "mine" : "all";
   const currentPage = Math.max(1, Number(page) || 1);
   const session = await auth();

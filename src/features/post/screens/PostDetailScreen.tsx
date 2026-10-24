@@ -2,10 +2,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, MapPin, Navigation } from "lucide-react";
 import { getPostById } from "@/server/post/queries";
-import { MapProvider } from "@/features/map/components/MapProvider";
-import { LocationMiniMap } from "@/features/map/components/LocationMiniMap";
+import { MapProvider, LocationMiniMap } from "@/features/map";
 
-export async function PostDetailScreen({ id }: { id: string }) {
+export type PostDetailScreenProps = {
+  params: Promise<{ id: string }>;
+};
+
+export async function PostDetailScreen({ params }: PostDetailScreenProps) {
+  const { id } = await params;
   const post = await getPostById(id);
 
   if (!post) notFound();

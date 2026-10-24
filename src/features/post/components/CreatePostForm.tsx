@@ -7,7 +7,7 @@ import {
   type CreatePostState,
 } from "@/server/post/actions";
 import { Modal } from "@/components/ui/Modal";
-import { PlaceAutocompleteInput } from "@/features/post/components/PlaceAutocompleteInput";
+import { PlaceAutocompleteInput } from "./PlaceAutocompleteInput";
 import type { PlaceDetails } from "@/hooks/usePlacePredictions";
 
 export function CreatePostForm({

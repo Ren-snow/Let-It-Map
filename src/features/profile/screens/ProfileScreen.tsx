@@ -1,7 +1,6 @@
 import { LogIn } from "lucide-react";
 import { auth } from "@/lib/auth";
-import { SignInButton } from "@/features/auth/components/SignInButton";
-import { SignOutButton } from "@/features/auth/components/SignOutButton";
+import { SignInButton, SignOutButton } from "@/features/auth";
 
 export async function ProfileScreen() {
   const session = await auth();

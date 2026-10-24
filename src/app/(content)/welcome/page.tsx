@@ -1,5 +1,1 @@
-import { WelcomeScreen } from "@/features/content/screens/WelcomeScreen";
-
-export default function Page() {
-  return <WelcomeScreen />;
-}
+export { WelcomeScreen as default } from "@/features/content";

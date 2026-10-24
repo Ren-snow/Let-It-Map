@@ -1,9 +1,5 @@
-import { PostListScreen } from "@/features/post/screens/PostListScreen";
+import { PostListScreen, type PostListScreenProps } from "@/features/post";
 
-export default async function Page({
-  searchParams,
-}: {
-  searchParams: Promise<{ tab?: string; page?: string }>;
-}) {
-  return <PostListScreen searchParams={await searchParams} />;
+export default function Page(props: PostListScreenProps) {
+  return <PostListScreen {...props} />;
 }

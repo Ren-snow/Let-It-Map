@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { ChevronRight, MapPinOff, Navigation, PenLine } from "lucide-react";
-import { StreetView } from "@/features/map/components/StreetView";
-import type { Snap } from "@/features/map/hooks/useBottomSheet";
+import { StreetView } from "./StreetView";
+import type { Snap } from "../hooks/useBottomSheet";
 import type { MapLocation } from "@/server/map/types";
 
 function directionsUrl(location: MapLocation) {

@@ -1,6 +1,6 @@
 import { getMapLocations } from "@/server/map/queries";
-import { MapProvider } from "@/features/map/components/MapProvider";
-import { MapExplorer } from "@/features/map/components/MapExplorer";
+import { MapProvider } from "../components/MapProvider";
+import { MapExplorer } from "../components/MapExplorer";
 
 /**
  * Launch screen. The map is the background layer; everything else floats on it.

@@ -3,10 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { MapView } from "@/features/map/components/MapView";
-import { MapSearchBar } from "@/features/map/components/MapSearchBar";
-import { LocationSheet } from "@/features/map/components/LocationSheet";
-import { useBottomSheet } from "@/features/map/hooks/useBottomSheet";
+import { MapView } from "./MapView";
+import { MapSearchBar } from "./MapSearchBar";
+import { LocationSheet } from "./LocationSheet";
+import { useBottomSheet } from "../hooks/useBottomSheet";
 import type { PlaceDetails } from "@/hooks/usePlacePredictions";
 import type { MapLocation } from "@/server/map/types";
 

@@ -85,6 +85,29 @@ const eslintConfig = defineConfig([
       ],
     },
   },
+  // Features expose a public entry point; everything else is internal.
+  // Inside a feature use relative paths, so only cross-feature reaches trip this.
+  {
+    files: ["src/app/**/*.{ts,tsx}", "src/features/**/*.{ts,tsx}", "src/components/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: [
+                "@/features/*/screens/*",
+                "@/features/*/components/*",
+                "@/features/*/hooks/*",
+              ],
+              message:
+                "Import through the feature's entry point (@/features/<name>). Inside the same feature, use a relative path.",
+            },
+          ],
+        },
+      ],
+    },
+  },
   // Presentational components receive data as props.
   {
     files: ["src/features/*/components/**/*.{ts,tsx}", "src/components/**/*.{ts,tsx}"],

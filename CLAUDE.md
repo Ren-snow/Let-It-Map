@@ -41,6 +41,7 @@ src/
 │       └── types.ts      # Domain types
 ├── features/         # UI modules — screens, components, hooks
 │   └── [feature]/
+│       ├── index.ts      # Public surface. Everything else is internal
 │       ├── screens/      # Whole screens. The ONLY place UI fetches data
 │       ├── components/   # Presentational. Props only
 │       └── hooks/
@@ -55,7 +56,8 @@ src/
 - **Server vs Client:** Components are Server Components by default. Add `"use client"` only when interactivity is needed.
 - **File/folder placement:** Always follow `docs/folder-structure-spec.md` when creating files or directories.
 - **Layer boundary:** `src/server/**` (except `actions.ts`) must not import `next/*`, `react`, `@/lib/auth`, or any UI. `src/app/**`, `src/features/**`, and `src/components/**` must not import `@/server/db` or `drizzle-orm`. ESLint-enforced — run `npm run lint` after touching either side.
-- **Routing layer:** `app/**/page.tsx` may only export `metadata`/`viewport`, await `params`/`searchParams`, and render one screen. No JSX beyond that, no data fetching. Keep it under 15 lines.
+- **Routing layer:** `app/**/page.tsx` forwards the page props to one screen and nothing else — no type declarations, no awaiting, no data fetching. A screen owns its own props type (`PostListScreenProps`) and awaits `params`/`searchParams` itself. Screens with no props are a one-line re-export: `export { ProfileScreen as default } from "@/features/profile"`.
+- **Feature entry points:** every feature has an `index.ts` listing what the outside may use. Cross-feature imports go through `@/features/<name>`; inside a feature use relative paths. Deep imports from outside are an ESLint error.
 - **Screens:** `features/{domain}/screens/` is the only place in the UI that fetches data or calls `notFound()`/`redirect()`. Components take data as props. ESLint-enforced.
 - **Data fetching:** Server queries (`server/*/queries.ts`) are plain async functions (no `"use server"`) called directly from Server Components.
 - **Mutations:** Domain logic goes in `server/*/mutations.ts`; the `"use server"` adapter in `server/*/actions.ts` handles auth, Zod parsing, and `revalidatePath`/`redirect`, and is called from Client Components. Suffix actions with `Action` (`createPostAction`).
