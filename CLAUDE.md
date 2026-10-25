@@ -31,13 +31,14 @@ src/
 │   ├── (content)/        # Header + Footer website chrome
 │   └── api/
 ├── components/       # Shared UI components (layout/, ui/)
-├── server/           # Backend — three tiers
-│   ├── api/              # Adapter: Hono routes, auth middleware, error mapping
+├── server/           # Backend — three tiers, one folder per domain
+│   ├── api/              # Assembly + cross-cutting: app, middleware, onError
 │   ├── db/               # Drizzle client + schema
 │   ├── schema/           # Zod input schemas
 │   ├── errors.ts         # Domain errors services throw
 │   ├── transaction.ts    # DbClient + withTransaction (the unit of work)
 │   └── [domain]/
+│       ├── routes.ts     # Hono sub-app. The only framework-aware file here
 │       ├── service.ts    # Business rules. No SQL
 │       ├── repository.ts # SQL + row-to-domain mapping. No rules
 │       └── types.ts      # Domain types
@@ -61,12 +62,14 @@ src/
 - **Routing layer:** `app/**/page.tsx` forwards the page props to one screen and nothing else — no type declarations, no awaiting, no data fetching. A screen owns its own props type (`PostListScreenProps`) and awaits `params`/`searchParams` itself. Screens with no props are a one-line re-export: `export { ProfileScreen as default } from "@/features/profile"`.
 - **Feature entry points:** every feature has an `index.ts` listing what the outside may use. Cross-feature imports go through `@/features/<name>`; inside a feature use relative paths. Deep imports from outside are an ESLint error.
 - **Screens:** `features/{domain}/screens/` is the only place in the UI that fetches data or calls `notFound()`/`redirect()`. Components take data as props. ESLint-enforced.
-- **Three tiers:** the adapter (`server/api/`) does auth → validate → call one service → translate. `service.ts` holds business rules and owns the transaction boundary but writes no SQL. `repository.ts` writes SQL and maps rows to domain types, taking `DbClient` as its first argument. All boundaries are ESLint-enforced.
-- **Writes go over HTTP:** a mutation is a Hono route under `server/api/routes/`, called from the client through the typed `api` client in `lib/api/client.ts`. Server Actions are reserved for sign-in/out, which needs `redirect`. This is what lets a mobile client reuse the same backend later.
+- **One folder per domain:** a domain is an entity with its own table and its own rules (`post`, `location`). Everything about it — `routes.ts`, `service.ts`, `repository.ts`, `types.ts` — lives in that folder. `server/api/` holds only what belongs to no domain: the app assembly, middleware and error mapping.
+- **Three tiers:** the adapter (`server/*/routes.ts` plus `server/api/`) does auth → validate → call one service → translate. `service.ts` holds business rules and owns the transaction boundary but writes no SQL. `repository.ts` writes SQL and maps rows to domain types, taking `DbClient` as its first argument. All boundaries are ESLint-enforced.
+- **Writes go over HTTP:** a mutation is a Hono route in `server/<domain>/routes.ts`, called from the client through the typed `api` client in `lib/api/client.ts`. Server Actions are reserved for sign-in/out, which needs `redirect`, and live in `server/api/actions/`. This is what lets a mobile client reuse the same backend later.
 - **Crossing domains:** a service may call another domain's **service**, never its repository. Inside a domain use relative imports (`./repository`); across domains use `@/server/<domain>/service`.
 - **Reads vs writes:** a read returns `null` when something is absent; a write throws a domain error from `server/errors.ts`. Only the adapter turns those into HTTP status or UI state.
 - **Reads stay in-process:** screens call `server/*/service.ts` directly — no HTTP hop, because the map and feed's first paint is the thing that matters most.
 - **Form state:** a client form owns its own `isSubmitting`/`error` state and posts through `api`. `revalidatePath` is called inside the route; the client follows with `router.refresh()`.
+- **Hono routes:** chain every method onto one expression (`new Hono().post(…).put(…)`). Separate statements still work at runtime but silently drop the route from `AppType`, so the client loses its types. Keep handlers inline — extracting one into a plain function breaks Hono's parameter inference; use `factory.createHandlers()` if you must.
 - **Validation:** Every route validates with `zValidator` against a schema in `server/schema/`. The same schemas are importable from the client.
 - **App shell:** `(app)` screens are full screen with a bottom `TabBar`; size them with `--app-height` (`100dvh` minus the tab bar), never `h-screen`/`vh`. `(content)` keeps the Header/Footer website chrome.
 - **Styling:** Tailwind utility classes. Custom design tokens defined in `globals.css` (Burnt Sienna accent, Forest Teal secondary, warm stone palette).

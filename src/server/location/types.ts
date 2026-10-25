@@ -1,4 +1,5 @@
-export type MapLocation = {
+/** A location together with the posts pinned to it — the shape the map needs. */
+export type LocationWithPosts = {
   id: string;
   placeId: string;
   name: string;

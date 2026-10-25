@@ -4,13 +4,13 @@ import Link from "next/link";
 import { ChevronRight, MapPinOff, Navigation, PenLine } from "lucide-react";
 import { StreetView } from "./StreetView";
 import type { Snap } from "../hooks/useBottomSheet";
-import type { MapLocation } from "@/server/map/types";
+import type { LocationWithPosts } from "@/server/location/types";
 
-function directionsUrl(location: MapLocation) {
+function directionsUrl(location: LocationWithPosts) {
   return `https://www.google.com/maps/dir/?api=1&destination=${location.latitude},${location.longitude}`;
 }
 
-function createPostUrl(location: MapLocation) {
+function createPostUrl(location: LocationWithPosts) {
   const params = new URLSearchParams({
     placeId: location.placeId,
     name: location.name,
@@ -36,10 +36,10 @@ export function LocationSheet({
   isDragging,
   dragHandlers,
 }: {
-  location: MapLocation | null;
-  areaLocations: MapLocation[];
+  location: LocationWithPosts | null;
+  areaLocations: LocationWithPosts[];
   areaPostCount: number;
-  onSelectLocation: (location: MapLocation) => void;
+  onSelectLocation: (location: LocationWithPosts) => void;
   snap: Snap;
   sheetHeight: number;
   translate: number;

@@ -1,9 +1,9 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { revalidatePath } from "next/cache";
-import * as postService from "@/server/post/service";
+import * as postService from "./service";
 import { createPostInput } from "@/server/schema/post";
-import { authRequired, type AuthEnv } from "../middleware/auth";
+import { authRequired, type AuthEnv } from "@/server/api/middleware/auth";
 
 export const posts = new Hono<AuthEnv>().post(
   "/",

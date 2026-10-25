@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { Map, AdvancedMarker, Pin, useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import type { MapEvent } from "@vis.gl/react-google-maps";
 import type { PlaceDetails } from "@/hooks/usePlacePredictions";
-import type { MapLocation } from "@/server/map/types";
+import type { LocationWithPosts } from "@/server/location/types";
 
 const FALLBACK_CENTER = { lat: 20, lng: 0 };
 const FALLBACK_ZOOM = 2;
@@ -22,8 +22,8 @@ function MapCamera({
   focus,
   bottomInset,
 }: {
-  locations: MapLocation[];
-  selected: MapLocation | null;
+  locations: LocationWithPosts[];
+  selected: LocationWithPosts | null;
   focus: PlaceDetails | null;
   bottomInset: number;
 }) {
@@ -84,9 +84,9 @@ export function MapView({
   bottomInset,
   onBoundsChange,
 }: {
-  locations: MapLocation[];
-  selected: MapLocation | null;
-  onSelect: (location: MapLocation) => void;
+  locations: LocationWithPosts[];
+  selected: LocationWithPosts | null;
+  onSelect: (location: LocationWithPosts) => void;
   focus: PlaceDetails | null;
   bottomInset: number;
   onBoundsChange: (bounds: google.maps.LatLngBoundsLiteral | null) => void;

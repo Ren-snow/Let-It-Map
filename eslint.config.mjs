@@ -80,7 +80,7 @@ const eslintConfig = defineConfig([
   // Framework-independent, so it can be lifted into a separate backend later.
   {
     files: ["src/server/**/*.ts"],
-    ignores: ["src/server/**/actions.ts", "src/server/api/**"],
+    ignores: ["src/server/*/routes.ts", "src/server/api/**"],
     rules: restrict(NO_FRAMEWORK, NO_SESSION, NO_UI),
   },
   // Services own business rules. No SQL, no other domain's repository.
@@ -94,8 +94,9 @@ const eslintConfig = defineConfig([
     rules: restrict(NO_FRAMEWORK, NO_SESSION, NO_UI, NO_SERVICE_FROM_REPOSITORY),
   },
   // Adapters may know the framework, but not the layers below the service.
+  // routes.ts lives inside its domain; the rest of the adapter is cross-cutting.
   {
-    files: ["src/server/api/**/*.ts", "src/server/**/actions.ts"],
+    files: ["src/server/api/**/*.ts", "src/server/*/routes.ts"],
     rules: restrict(NO_UI, NO_FOREIGN_REPOSITORY, NO_DB_FROM_UI),
   },
 

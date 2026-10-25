@@ -8,11 +8,11 @@ import { MapSearchBar } from "./MapSearchBar";
 import { LocationSheet } from "./LocationSheet";
 import { useBottomSheet } from "../hooks/useBottomSheet";
 import type { PlaceDetails } from "@/hooks/usePlacePredictions";
-import type { MapLocation } from "@/server/map/types";
+import type { LocationWithPosts } from "@/server/location/types";
 
 /** Longitude ranges wrap at the antimeridian; latitude never does. */
 function isWithin(
-  location: MapLocation,
+  location: LocationWithPosts,
   bounds: google.maps.LatLngBoundsLiteral,
 ) {
   const { north, south, east, west } = bounds;
@@ -25,10 +25,10 @@ function isWithin(
   return inLatitude && inLongitude;
 }
 
-export function MapExplorer({ locations }: { locations: MapLocation[] }) {
+export function MapExplorer({ locations }: { locations: LocationWithPosts[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [viewportHeight, setViewportHeight] = useState(0);
-  const [selected, setSelected] = useState<MapLocation | null>(null);
+  const [selected, setSelected] = useState<LocationWithPosts | null>(null);
   const [focus, setFocus] = useState<PlaceDetails | null>(null);
   const [bounds, setBounds] = useState<google.maps.LatLngBoundsLiteral | null>(
     null,
@@ -46,7 +46,7 @@ export function MapExplorer({ locations }: { locations: MapLocation[] }) {
     return () => observer.disconnect();
   }, []);
 
-  function selectLocation(location: MapLocation) {
+  function selectLocation(location: LocationWithPosts) {
     setSelected(location);
     sheet.setSnap("half");
   }

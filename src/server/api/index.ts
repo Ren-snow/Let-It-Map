@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { toResponse } from "./errors";
-import { posts } from "./routes/posts";
+import { posts } from "@/server/post/routes";
 
 /** Chained so the route types survive into AppType for the typed client. */
 const app = new Hono().basePath("/api").route("/posts", posts);

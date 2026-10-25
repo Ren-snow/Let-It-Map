@@ -1,5 +1,6 @@
-import type { DbClient } from "@/server/transaction";
+import { dbClient, type DbClient } from "@/server/transaction";
 import type { LocationInput } from "@/server/schema/location";
+import type { LocationWithPosts } from "./types";
 import * as locationRepo from "./repository";
 
 /**
@@ -12,4 +13,12 @@ export async function findOrCreate(
 ): Promise<string> {
   const existing = await locationRepo.findIdByPlaceId(dbc, input.placeId);
   return existing ?? locationRepo.insert(dbc, input);
+}
+
+/**
+ * Pins for the map screen. There is no rule to apply yet — when one arrives
+ * (hiding drafts, respecting a block list) it belongs here, not in the query.
+ */
+export async function listPins(): Promise<LocationWithPosts[]> {
+  return locationRepo.findAllWithPosts(dbClient);
 }
