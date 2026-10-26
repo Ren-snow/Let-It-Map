@@ -34,7 +34,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      {/* Extensions such as Grammarly stamp attributes onto body before React
+          hydrates. This ignores body's own attributes only — a mismatch inside
+          the tree is still reported. */}
       <body
+        suppressHydrationWarning
         className={`${plusJakarta.variable} ${dmSerif.variable} font-sans antialiased`}
       >
         {children}
