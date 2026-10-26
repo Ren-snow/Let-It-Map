@@ -29,20 +29,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/welcome",
   },
   callbacks: {
-    authorized({ auth, request }) {
-      const pathname = request.nextUrl.pathname;
-
-      // Everything is public by default — the map, the feed and the profile tab
-      // are reachable signed out, for discovery and SEO. Screens that need an
-      // account render their own sign-in prompt; only writes are gated here.
-      const protectedPaths = ["/posts/create"];
-
-      const isProtected = protectedPaths.some(
-        (path) => pathname === path || pathname.startsWith(`${path}/`),
-      );
-
-      return isProtected ? !!auth?.user : true;
-    },
+    // Every page is reachable signed out. Redirecting someone to the landing
+    // page mid-task loses their context, so screens ask for an account
+    // themselves instead. The real boundary is the API, which answers 401.
+    authorized: () => true,
   },
 
   secret: process.env.AUTH_SECRET,

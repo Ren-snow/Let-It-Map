@@ -1,5 +1,8 @@
+import { LogIn } from "lucide-react";
+import { auth } from "@/lib/auth";
 import { CreatePostForm } from "../components/CreatePostForm";
 import { MapProvider } from "@/features/map";
+import { SignInButton } from "@/features/auth";
 import type { PlaceDetails } from "@/hooks/usePlacePredictions";
 
 export type PostCreateScreenProps = {
@@ -27,7 +30,10 @@ function readPlace(params: PlaceParams): PlaceDetails | null {
 }
 
 export async function PostCreateScreen({ searchParams }: PostCreateScreenProps) {
-  const initialPlace = readPlace(await searchParams);
+  const [initialPlace, session] = await Promise.all([
+    searchParams.then(readPlace),
+    auth(),
+  ]);
 
   return (
     <div className="mx-auto max-w-2xl px-5 py-8">
@@ -37,9 +43,21 @@ export async function PostCreateScreen({ searchParams }: PostCreateScreenProps) 
           Share a place that matters to you
         </p>
       </div>
-      <MapProvider>
-        <CreatePostForm initialPlace={initialPlace} />
-      </MapProvider>
+
+      {session?.user ? (
+        <MapProvider>
+          <CreatePostForm initialPlace={initialPlace} />
+        </MapProvider>
+      ) : (
+        /* The page is public; the API is what actually rejects anonymous writes. */
+        <div className="flex flex-col items-center gap-3 rounded-2xl border border-border bg-surface py-16">
+          <LogIn className="h-10 w-10 text-faint" />
+          <p className="text-sm text-muted">Sign in to share a place</p>
+          <div className="mt-2">
+            <SignInButton />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

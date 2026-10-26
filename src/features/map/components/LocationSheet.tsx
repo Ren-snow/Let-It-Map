@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ChevronRight, MapPinOff, Navigation, PenLine } from "lucide-react";
+import { AuthGatedLink } from "@/features/auth";
 import { StreetView } from "./StreetView";
 import type { Snap } from "../hooks/useBottomSheet";
 import type { LocationWithPosts } from "@/server/location/types";
@@ -27,6 +28,7 @@ function postCountLabel(count: number) {
 
 export function LocationSheet({
   location,
+  isAuthenticated,
   areaLocations,
   areaPostCount,
   onSelectLocation,
@@ -37,6 +39,7 @@ export function LocationSheet({
   dragHandlers,
 }: {
   location: LocationWithPosts | null;
+  isAuthenticated: boolean;
   areaLocations: LocationWithPosts[];
   areaPostCount: number;
   onSelectLocation: (location: LocationWithPosts) => void;
@@ -82,13 +85,14 @@ export function LocationSheet({
           <>
             {/* Action row */}
             <div className="flex gap-2">
-              <Link
+              <AuthGatedLink
                 href={createPostUrl(location)}
+                isAuthenticated={isAuthenticated}
                 className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent-hover"
               >
                 <PenLine className="h-4 w-4" />
                 Post here
-              </Link>
+              </AuthGatedLink>
               <a
                 href={directionsUrl(location)}
                 target="_blank"

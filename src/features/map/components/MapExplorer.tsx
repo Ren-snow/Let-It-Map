@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import { Plus } from "lucide-react";
+import { AuthGatedLink } from "@/features/auth";
 import { MapView } from "./MapView";
 import { MapSearchBar } from "./MapSearchBar";
 import { LocationSheet } from "./LocationSheet";
@@ -25,7 +25,13 @@ function isWithin(
   return inLatitude && inLongitude;
 }
 
-export function MapExplorer({ locations }: { locations: LocationWithPosts[] }) {
+export function MapExplorer({
+  locations,
+  isAuthenticated,
+}: {
+  locations: LocationWithPosts[];
+  isAuthenticated: boolean;
+}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [viewportHeight, setViewportHeight] = useState(0);
   const [selected, setSelected] = useState<LocationWithPosts | null>(null);
@@ -87,8 +93,9 @@ export function MapExplorer({ locations }: { locations: LocationWithPosts[] }) {
       <MapSearchBar onSelect={handleSearch} />
 
       {/* Primary action, kept above the sheet and out of the way when it is open */}
-      <Link
+      <AuthGatedLink
         href="/posts/create"
+        isAuthenticated={isAuthenticated}
         aria-label="Create a post"
         style={{
           bottom: sheet.visibleHeight + 16,
@@ -101,10 +108,11 @@ export function MapExplorer({ locations }: { locations: LocationWithPosts[] }) {
         }`}
       >
         <Plus className="h-6 w-6" />
-      </Link>
+      </AuthGatedLink>
 
       <LocationSheet
         location={activeLocation}
+        isAuthenticated={isAuthenticated}
         areaLocations={visibleLocations}
         areaPostCount={areaPostCount}
         onSelectLocation={selectLocation}

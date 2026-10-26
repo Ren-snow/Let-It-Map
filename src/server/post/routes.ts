@@ -16,7 +16,8 @@ export const posts = new Hono<AuthEnv>().post(
   async (c) => {
     const post = await postService.create(c.get("userId"), c.req.valid("json"));
 
-    // The map at "/" is prerendered, so a new pin needs it invalidated too.
+    // "/" renders per request now that it reads the session, but keep this so a
+    // new pin still lands if the map ever goes back to being prerendered.
     revalidatePath("/");
     revalidatePath("/posts");
 

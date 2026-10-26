@@ -34,7 +34,14 @@ function PinIcon({ className }: { className?: string }) {
   );
 }
 
-export function SignInModal({ onClose }: { onClose: () => void }) {
+export function SignInModal({
+  onClose,
+  callbackUrl,
+}: {
+  onClose: () => void;
+  /** Where to land once the provider sends the user back. */
+  callbackUrl?: string;
+}) {
   return (
     <Modal onClose={onClose}>
       <div className="flex flex-col items-center px-8 py-10">
@@ -53,7 +60,7 @@ export function SignInModal({ onClose }: { onClose: () => void }) {
 
         {/* Sign In Buttons */}
         <div className="w-full space-y-3">
-          <form action={handleSignIn.bind(null, "google")}>
+          <form action={handleSignIn.bind(null, "google", callbackUrl)}>
             <button
               type="submit"
               className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl border border-border bg-surface px-5 py-3.5 text-sm font-semibold text-foreground transition-all hover:bg-surface-alt active:scale-[0.98]"
@@ -63,7 +70,7 @@ export function SignInModal({ onClose }: { onClose: () => void }) {
             </button>
           </form>
 
-          <form action={handleSignIn.bind(null, "github")}>
+          <form action={handleSignIn.bind(null, "github", callbackUrl)}>
             <button
               type="submit"
               className="flex w-full cursor-pointer items-center justify-center gap-3 rounded-xl border border-border bg-foreground px-5 py-3.5 text-sm font-semibold text-background transition-all hover:opacity-90 active:scale-[0.98]"
