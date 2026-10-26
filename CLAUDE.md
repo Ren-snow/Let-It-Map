@@ -70,6 +70,7 @@ src/
 - **Reads stay in-process:** screens call `server/*/service.ts` directly — no HTTP hop, because the map and feed's first paint is the thing that matters most.
 - **Form state:** a client form owns its own `isSubmitting`/`error` state and posts through `api`. `revalidatePath` is called inside the route; the client follows with `router.refresh()`.
 - **Hono routes:** chain every method onto one expression (`new Hono().post(…).put(…)`). Separate statements still work at runtime but silently drop the route from `AppType`, so the client loses its types. Keep handlers inline — extracting one into a plain function breaks Hono's parameter inference; use `factory.createHandlers()` if you must.
+- **Ownership:** a write repository merges the owner into the WHERE clause (`updateOwned`, `deleteOwned`) and returns `null` on no match; the service turns that into a `ForbiddenError`. Never read-then-write to check an owner.
 - **Validation:** Every route validates with `zValidator` against a schema in `server/schema/`. The same schemas are importable from the client.
 - **App shell:** `(app)` screens are full screen with a bottom `TabBar`; size them with `--app-height` (`100dvh` minus the tab bar), never `h-screen`/`vh`. `(content)` keeps the Header/Footer website chrome.
 - **Styling:** Tailwind utility classes. Custom design tokens defined in `globals.css` (Burnt Sienna accent, Forest Teal secondary, warm stone palette).

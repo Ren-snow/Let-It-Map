@@ -1,4 +1,4 @@
-import { count, desc, eq } from "drizzle-orm";
+import { and, count, desc, eq } from "drizzle-orm";
 import { locations, posts, users } from "@/server/db/schema";
 import type { DbClient } from "@/server/transaction";
 import type { PostDetail, PostWithDetails } from "./types";
@@ -118,4 +118,38 @@ export async function insert(
     .returning({ id: posts.id });
 
   return { id: row.id };
+}
+
+/**
+ * Ownership is part of the WHERE clause rather than a separate read, so there
+ * is no window between checking and writing. No match means either the post is
+ * gone or it belongs to somebody else — the caller decides what that means.
+ */
+export async function updateOwned(
+  dbc: DbClient,
+  params: {
+    id: string;
+    userId: string;
+    values: { title: string; description: string };
+  },
+): Promise<{ id: string } | null> {
+  const [row] = await dbc
+    .update(posts)
+    .set({ ...params.values, updatedAt: new Date() })
+    .where(and(eq(posts.id, params.id), eq(posts.userId, params.userId)))
+    .returning({ id: posts.id });
+
+  return row ?? null;
+}
+
+export async function deleteOwned(
+  dbc: DbClient,
+  params: { id: string; userId: string },
+): Promise<{ id: string } | null> {
+  const [row] = await dbc
+    .delete(posts)
+    .where(and(eq(posts.id, params.id), eq(posts.userId, params.userId)))
+    .returning({ id: posts.id });
+
+  return row ?? null;
 }

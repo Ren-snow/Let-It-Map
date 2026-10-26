@@ -6,3 +6,4 @@
 export { PostListScreen, type PostListScreenProps } from "./screens/PostListScreen";
 export { PostDetailScreen, type PostDetailScreenProps } from "./screens/PostDetailScreen";
 export { PostCreateScreen, type PostCreateScreenProps } from "./screens/PostCreateScreen";
+export { PostEditScreen, type PostEditScreenProps } from "./screens/PostEditScreen";

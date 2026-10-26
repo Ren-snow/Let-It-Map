@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, MapPin, Navigation } from "lucide-react";
+import { ArrowLeft, MapPin, Navigation, Pencil } from "lucide-react";
+import { auth } from "@/lib/auth";
+import { DeletePostButton } from "../components/DeletePostButton";
 import * as postService from "@/server/post/service";
 import { MapProvider, LocationMiniMap } from "@/features/map";
 
@@ -10,9 +12,11 @@ export type PostDetailScreenProps = {
 
 export async function PostDetailScreen({ params }: PostDetailScreenProps) {
   const { id } = await params;
-  const post = await postService.get(id);
+  const [post, session] = await Promise.all([postService.get(id), auth()]);
 
   if (!post) notFound();
+
+  const isAuthor = session?.user?.id === post.user.id;
 
   const initials = post.user.name?.charAt(0).toUpperCase() ?? "?";
   const publishedAt = post.createdAt.toLocaleDateString("en-US", {
@@ -31,9 +35,24 @@ export async function PostDetailScreen({ params }: PostDetailScreenProps) {
         Back to posts
       </Link>
 
-      <h1 className="mt-6 font-serif text-3xl leading-tight tracking-tight">
-        {post.title}
-      </h1>
+      <div className="mt-6 flex items-start justify-between gap-4">
+        <h1 className="font-serif text-3xl leading-tight tracking-tight">
+          {post.title}
+        </h1>
+
+        {isAuthor && (
+          <div className="flex shrink-0 gap-2">
+            <Link
+              href={`/posts/${post.id}/edit`}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm font-medium text-muted transition-colors hover:bg-foreground/5 hover:text-foreground"
+            >
+              <Pencil className="h-4 w-4" />
+              Edit
+            </Link>
+            <DeletePostButton postId={post.id} />
+          </div>
+        )}
+      </div>
 
       <div className="mt-4 flex items-center gap-3">
         {post.user.image ? (

@@ -7,10 +7,12 @@ const description = z
   .min(1)
   .max(2000, "Description must be between 1 and 2000 characters");
 
-export const createPostInput = z.object({
-  title,
-  description,
+/** What the author writes. The place is chosen once and never edited. */
+export const updatePostInput = z.object({ title, description });
+
+export const createPostInput = updatePostInput.extend({
   location: locationInput,
 });
 
+export type UpdatePostInput = z.infer<typeof updatePostInput>;
 export type CreatePostInput = z.infer<typeof createPostInput>;
