@@ -25,8 +25,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       issuer: "https://github.com/login/oauth",
     }),
   ],
+  // Only the error page is ours — there is no sign-in page, because signing in
+  // happens in a modal. Pointing signIn at the landing page used to swallow
+  // every failure silently, which is how OAuthAccountNotLinked went unnoticed.
   pages: {
-    signIn: "/welcome",
+    error: "/auth-error",
   },
   callbacks: {
     // Every page is reachable signed out. Redirecting someone to the landing
